@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"image/draw"
 	"strings"
 )
 
@@ -31,6 +32,8 @@ func CreateSprite(palette *map[string]color.RGBA, scanlines []int) (*Sprite, err
 // AddToCanvas draws the sprite on an existing image canvas
 func (sprite *Sprite) AddToCanvas(canvas *image.RGBA, targetX int, targetY int) {
 
+	spriteImage := image.NewRGBA(image.Rect(0, 0, 16, 16))
+
 	for i, scanline := range *sprite.Scanlines {
 
 		y := i
@@ -47,9 +50,11 @@ func (sprite *Sprite) AddToCanvas(canvas *image.RGBA, targetX int, targetY int) 
 		scanlinePixels := strings.Split(scanlineString, "")
 
 		for x, scanlinePixel := range scanlinePixels {
-			canvas.Set((targetX + xOffset + x), (targetY + y), (*sprite.Palette)[scanlinePixel])
+			spriteImage.Set((xOffset + x), y, (*sprite.Palette)[scanlinePixel])
 		}
 
 	}
+
+	draw.Draw(canvas, spriteImage.Bounds().Add(image.Pt(targetX, targetY)), spriteImage, image.ZP, draw.Over)
 
 }
