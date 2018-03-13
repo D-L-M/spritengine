@@ -30,7 +30,7 @@ func CreateSprite(palette *map[string]color.RGBA, scanlines []int) (*Sprite, err
 }
 
 // AddToCanvas draws the sprite on an existing image canvas
-func (sprite *Sprite) AddToCanvas(canvas *image.RGBA, targetX int, targetY int) {
+func (sprite *Sprite) AddToCanvas(canvas *image.RGBA, targetX int, targetY int, mirrorImage bool) {
 
 	spriteImage := image.NewRGBA(image.Rect(0, 0, 16, 16))
 
@@ -50,7 +50,15 @@ func (sprite *Sprite) AddToCanvas(canvas *image.RGBA, targetX int, targetY int) 
 		scanlinePixels := strings.Split(scanlineString, "")
 
 		for x, scanlinePixel := range scanlinePixels {
-			spriteImage.Set((xOffset + x), y, (*sprite.Palette)[scanlinePixel])
+
+			xPos := xOffset + x
+
+			if mirrorImage == true {
+				xPos = (15 - xPos)
+			}
+
+			spriteImage.Set(xPos, y, (*sprite.Palette)[scanlinePixel])
+
 		}
 
 	}

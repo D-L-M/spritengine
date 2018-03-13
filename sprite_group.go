@@ -14,17 +14,31 @@ type SpriteGroup struct {
 }
 
 // AddToCanvas draws the sprite group on an existing image canvas
-func (spriteGroup *SpriteGroup) AddToCanvas(canvas *image.RGBA, targetX int, targetY int) {
+func (spriteGroup *SpriteGroup) AddToCanvas(canvas *image.RGBA, targetX int, targetY int, mirrorImage bool) {
 
 	spriteCount := 0
 
 	for y := 0; y < spriteGroup.Height; y++ {
 
-		for x := 0; x < spriteGroup.Width; x++ {
+		if mirrorImage == true {
 
-			(*spriteGroup.Sprites)[spriteCount].AddToCanvas(canvas, (targetX + (x * 16)), (targetY + (y * 16)))
+			for x := (spriteGroup.Width - 1); x >= 0; x-- {
 
-			spriteCount++
+				(*spriteGroup.Sprites)[spriteCount].AddToCanvas(canvas, (targetX + (x * 16)), (targetY + (y * 16)), mirrorImage)
+
+				spriteCount++
+
+			}
+
+		} else {
+
+			for x := 0; x < spriteGroup.Width; x++ {
+
+				(*spriteGroup.Sprites)[spriteCount].AddToCanvas(canvas, (targetX + (x * 16)), (targetY + (y * 16)), mirrorImage)
+
+				spriteCount++
+
+			}
 
 		}
 
