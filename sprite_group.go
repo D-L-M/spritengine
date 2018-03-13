@@ -17,27 +17,23 @@ type SpriteGroup struct {
 func (spriteGroup *SpriteGroup) AddToCanvas(canvas *image.RGBA, targetX int, targetY int, mirrorImage bool) {
 
 	spriteCount := 0
+	canvasDraw := func(x int, y int) {
+		(*spriteGroup.Sprites)[spriteCount].AddToCanvas(canvas, (targetX + (x * 16)), (targetY + (y * 16)), mirrorImage)
+		spriteCount++
+	}
 
 	for y := 0; y < spriteGroup.Height; y++ {
 
 		if mirrorImage == true {
 
 			for x := (spriteGroup.Width - 1); x >= 0; x-- {
-
-				(*spriteGroup.Sprites)[spriteCount].AddToCanvas(canvas, (targetX + (x * 16)), (targetY + (y * 16)), mirrorImage)
-
-				spriteCount++
-
+				canvasDraw(x, y)
 			}
 
 		} else {
 
 			for x := 0; x < spriteGroup.Width; x++ {
-
-				(*spriteGroup.Sprites)[spriteCount].AddToCanvas(canvas, (targetX + (x * 16)), (targetY + (y * 16)), mirrorImage)
-
-				spriteCount++
-
+				canvasDraw(x, y)
 			}
 
 		}
