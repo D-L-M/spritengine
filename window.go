@@ -14,10 +14,10 @@ import (
 )
 
 // CreateWindow creates a window and provides a corresponding image that can be drawn on
-func CreateWindow(title string, width int, height int, scaleFactor int, framesPerSecond int, framePainter func(stage *image.RGBA), keyReaction func(key.Event)) {
+func CreateWindow(title string, width int, height int, scaleFactor int, targetFrameRate int, framePainter func(stage *image.RGBA), keyListener func(key.Event)) {
 
 	lastPaintTimeNano := time.Now().UnixNano()
-	frameAgeNano := int64(1000000000) / int64(framesPerSecond)
+	targetFrameAgeNano := int64(1000000000) / int64(targetFrameRate)
 
 	driver.Main(func(src screen.Screen) {
 
@@ -42,7 +42,7 @@ func CreateWindow(title string, width int, height int, scaleFactor int, framesPe
 				timeNowNano := time.Now().UnixNano()
 
 				// Throttle to the desired FPS
-				if (timeNowNano - lastPaintTimeNano) > frameAgeNano {
+				if (timeNowNano - lastPaintTimeNano) > targetFrameAgeNano {
 
 					lastPaintTimeNano = timeNowNano
 					stage := image.NewRGBA(image.Rect(0, 0, width, height))
@@ -59,7 +59,7 @@ func CreateWindow(title string, width int, height int, scaleFactor int, framesPe
 				// Key presses
 			case key.Event:
 
-				keyReaction(e)
+				keyListener(e)
 
 			}
 
