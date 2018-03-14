@@ -14,7 +14,7 @@ import (
 )
 
 // CreateWindow creates a window and provides a corresponding image that can be drawn on
-func CreateWindow(title string, width int, height int, scaleFactor int, targetFrameRate int, framePainter func(stage *image.RGBA), keyListener func(key.Event)) {
+func CreateWindow(title string, width int, height int, scaleFactor int, targetFrameRate int, framePainter FramePainter, keyListener KeyListener) {
 
 	lastPaintTimeNano := time.Now().UnixNano()
 	targetFrameAgeNano := int64(1000000000) / int64(targetFrameRate)
@@ -40,14 +40,18 @@ func CreateWindow(title string, width int, height int, scaleFactor int, targetFr
 			case paint.Event:
 
 				timeNowNano := time.Now().UnixNano()
+				frameAgeNano := (timeNowNano - lastPaintTimeNano)
 
 				// Throttle to the desired FPS
-				if (timeNowNano - lastPaintTimeNano) > targetFrameAgeNano {
+				if frameAgeNano > targetFrameAgeNano {
 
 					lastPaintTimeNano = timeNowNano
+					frameAgeSeconds := (float64(frameAgeNano) / float64(1000000000))
+					currentFrameRate := 1 / frameAgeSeconds
+
 					stage := image.NewRGBA(image.Rect(0, 0, width, height))
 
-					framePainter(stage)
+					framePainter(stage, currentFrameRate)
 					xdraw.NearestNeighbor.Scale(buf.RGBA(), image.Rect(0, 0, width*scaleFactor, height*scaleFactor), stage, stage.Bounds(), draw.Over, nil)
 					win.Upload(image.Point{}, buf, buf.Bounds())
 					win.Publish()

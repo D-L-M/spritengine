@@ -36,7 +36,11 @@
   name = "golang.org/x/image"
   packages = [
     "draw",
-    "math/f64"
+    "font",
+    "font/basicfont",
+    "font/plan9font",
+    "math/f64",
+    "math/fixed"
   ]
   revision = "12117c17ca67ffa1ce22e9409f3b0b0a93ac08c7"
 
@@ -63,6 +67,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "85e81bee4aca2b779d04fa57f696ff43f401e902aeabe37f3444c4c5522aa2e5"
+  inputs-digest = "cdb2bff97004b3cea120a88bdb9ea865032d015f8cc11608cc66977e39b6738f"
   solver-name = "gps-cdcl"
   solver-version = 1
