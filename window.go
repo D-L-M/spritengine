@@ -43,20 +43,21 @@ func CreateWindow(title string, width int, height int, scaleFactor int, targetFr
 				frameAgeNano := (timeNowNano - lastPaintTimeNano)
 
 				// Throttle to the desired FPS
-				if frameAgeNano > targetFrameAgeNano {
-
-					lastPaintTimeNano = timeNowNano
-					frameAgeSeconds := (float64(frameAgeNano) / float64(1000000000))
-					currentFrameRate := 1 / frameAgeSeconds
-
-					stage := image.NewRGBA(image.Rect(0, 0, width, height))
-
-					framePainter(stage, currentFrameRate)
-					xdraw.NearestNeighbor.Scale(buf.RGBA(), image.Rect(0, 0, width*scaleFactor, height*scaleFactor), stage, stage.Bounds(), draw.Over, nil)
-					win.Upload(image.Point{}, buf, buf.Bounds())
-					win.Publish()
-
+				if frameAgeNano < targetFrameAgeNano {
+					time.Sleep(time.Duration(targetFrameAgeNano-frameAgeNano) * time.Nanosecond)
+					frameAgeNano = targetFrameAgeNano
 				}
+
+				lastPaintTimeNano = timeNowNano
+				frameAgeSeconds := (float64(frameAgeNano) / float64(1000000000))
+				currentFrameRate := 1 / frameAgeSeconds
+
+				stage := image.NewRGBA(image.Rect(0, 0, width, height))
+
+				framePainter(stage, currentFrameRate)
+				xdraw.NearestNeighbor.Scale(buf.RGBA(), image.Rect(0, 0, width*scaleFactor, height*scaleFactor), stage, stage.Bounds(), draw.Over, nil)
+				win.Upload(image.Point{}, buf, buf.Bounds())
+				win.Publish()
 
 				win.Send(paint.Event{})
 
