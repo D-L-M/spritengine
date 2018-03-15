@@ -28,7 +28,7 @@ func CreateGame(title string, width int, height int, scaleFactor int, targetFram
 
 	game.CurrentWorld.Game = &game
 
-	CreateWindow(&game)
+	createWindow(&game)
 
 	return &game
 

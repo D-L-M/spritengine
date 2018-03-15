@@ -13,8 +13,8 @@ import (
 	"golang.org/x/mobile/event/paint"
 )
 
-// CreateWindow creates a window and provides a corresponding image that can be drawn on
-func CreateWindow(game *Game) {
+// createWindow creates a window and provides a corresponding image that can be drawn on
+func createWindow(game *Game) {
 
 	lastPaintTimeNano := time.Now().UnixNano()
 	targetFrameAgeNano := int64(1000000000) / int64(game.TargetFrameRate)
