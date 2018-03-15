@@ -7,7 +7,7 @@ import (
 )
 
 // FramePainter is the signature for functions that handle frame painting
-type FramePainter func(stage *image.RGBA, frameRate float64)
+type FramePainter func(stage *image.RGBA, world *World, frameRate float64)
 
 // KeyListener is the signature for functions that handle key events
 type KeyListener func(key.Event)

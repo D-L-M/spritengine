@@ -14,15 +14,15 @@ import (
 )
 
 // CreateWindow creates a window and provides a corresponding image that can be drawn on
-func CreateWindow(title string, width int, height int, scaleFactor int, targetFrameRate int, framePainter FramePainter, keyListener KeyListener) {
+func CreateWindow(game *Game) {
 
 	lastPaintTimeNano := time.Now().UnixNano()
-	targetFrameAgeNano := int64(1000000000) / int64(targetFrameRate)
+	targetFrameAgeNano := int64(1000000000) / int64(game.TargetFrameRate)
 
 	driver.Main(func(src screen.Screen) {
 
-		res := image.Pt(width*scaleFactor, height*scaleFactor)
-		win, _ := src.NewWindow(&screen.NewWindowOptions{Width: res.X, Height: res.Y, Title: title})
+		res := image.Pt(game.Width*game.ScaleFactor, game.Height*game.ScaleFactor)
+		win, _ := src.NewWindow(&screen.NewWindowOptions{Width: res.X, Height: res.Y, Title: game.Title})
 		buf, _ := src.NewBuffer(res)
 
 		for {
@@ -52,10 +52,10 @@ func CreateWindow(title string, width int, height int, scaleFactor int, targetFr
 				frameAgeSeconds := (float64(frameAgeNano) / float64(1000000000))
 				currentFrameRate := 1 / frameAgeSeconds
 
-				stage := image.NewRGBA(image.Rect(0, 0, width, height))
+				stage := image.NewRGBA(image.Rect(0, 0, game.Width, game.Height))
 
-				framePainter(stage, currentFrameRate)
-				xdraw.NearestNeighbor.Scale(buf.RGBA(), image.Rect(0, 0, width*scaleFactor, height*scaleFactor), stage, stage.Bounds(), draw.Over, nil)
+				game.FramePainter(stage, game.CurrentWorld, currentFrameRate)
+				xdraw.NearestNeighbor.Scale(buf.RGBA(), image.Rect(0, 0, game.Width*game.ScaleFactor, game.Height*game.ScaleFactor), stage, stage.Bounds(), draw.Over, nil)
 				win.Upload(image.Point{}, buf, buf.Bounds())
 				win.Publish()
 
@@ -64,7 +64,7 @@ func CreateWindow(title string, width int, height int, scaleFactor int, targetFr
 				// Key presses
 			case key.Event:
 
-				keyListener(e)
+				game.KeyListener(e)
 
 			}
 

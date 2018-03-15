@@ -4,18 +4,31 @@ package spritengine
 type GameObject struct {
 	Sprite       SpriteInterface
 	Position     Vector
-	Width        int
-	Height       int
 	Mass         int
 	Velocity     Vector
 	JumpVelocity int
 	Direction    int
+	Flipped      bool
 }
 
 // IsJumping determined whether the game object is currently jumping
 func (gameObject *GameObject) IsJumping(floorYPosition int) bool {
 
-	return (gameObject.Position.Y + gameObject.Height) < floorYPosition
+	return (gameObject.Position.Y + gameObject.Height()) < floorYPosition
+
+}
+
+// Width gets the width of the game object
+func (gameObject *GameObject) Width() int {
+
+	return gameObject.Sprite.Width()
+
+}
+
+// Height gets the height of the game object
+func (gameObject *GameObject) Height() int {
+
+	return gameObject.Sprite.Height()
 
 }
 
@@ -34,8 +47,8 @@ func (gameObject *GameObject) RecalculatePosition(gravity int, floorYPosition in
 	gameObject.Velocity.Y -= gravity
 
 	// Ensure the floor object acts as a barrier
-	if (gameObject.Position.Y + gameObject.Height) > floorYPosition {
-		gameObject.Position.Y = (floorYPosition - gameObject.Height)
+	if (gameObject.Position.Y + gameObject.Height()) > floorYPosition {
+		gameObject.Position.Y = (floorYPosition - gameObject.Height())
 	}
 
 }
