@@ -7,3 +7,7 @@ Sprites are 16x16 pixels in size and can contain up to 16 different RGBA colours
 ## Example
 
 For a basic example, please see the code in the `example/` directory.
+
+## N.B.
+
+This package is in the very early stages of development and is by no means a finished product.
