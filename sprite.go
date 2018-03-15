@@ -66,3 +66,17 @@ func (sprite *Sprite) AddToCanvas(canvas *image.RGBA, targetX int, targetY int, 
 	draw.Draw(canvas, spriteImage.Bounds().Add(image.Pt(targetX, targetY)), spriteImage, image.ZP, draw.Over)
 
 }
+
+// Width gets the pixel width of the sprite
+func (sprite *Sprite) Width() int {
+
+	return 16
+
+}
+
+// Height gets the pixel height of the sprite
+func (sprite *Sprite) Height() int {
+
+	return 16
+
+}
