@@ -4,9 +4,9 @@ package spritengine
 type GameObject struct {
 	Sprite       SpriteInterface
 	Position     Vector
-	Mass         int
+	Mass         float64
 	Velocity     Vector
-	JumpVelocity int
+	JumpVelocity float64
 	Direction    int
 	Flipped      bool
 }
@@ -14,7 +14,12 @@ type GameObject struct {
 // IsJumping determined whether the game object is currently jumping
 func (gameObject *GameObject) IsJumping(floorYPosition int) bool {
 
-	return (gameObject.Position.Y + gameObject.Height()) < floorYPosition
+	// Special case for floating objects
+	if gameObject.Mass == 0 {
+		return false
+	}
+
+	return (int(gameObject.Position.Y) + gameObject.Height()) < floorYPosition
 
 }
 
@@ -33,7 +38,7 @@ func (gameObject *GameObject) Height() int {
 }
 
 // RecalculatePosition recalculates the latest X and Y position of the game object from its properties
-func (gameObject *GameObject) RecalculatePosition(gravity int, floorYPosition int) {
+func (gameObject *GameObject) RecalculatePosition(gravity float64, floorYPosition int) {
 
 	// Move left or right
 	if gameObject.Direction == DirRight {
@@ -44,11 +49,11 @@ func (gameObject *GameObject) RecalculatePosition(gravity int, floorYPosition in
 
 	// Jump up (and/or be pulled down by gravity)
 	gameObject.Position.Y -= gameObject.Velocity.Y
-	gameObject.Velocity.Y -= gravity
+	gameObject.Velocity.Y -= (gravity * gameObject.Mass)
 
 	// Ensure the floor object acts as a barrier
-	if (gameObject.Position.Y + gameObject.Height()) > floorYPosition {
-		gameObject.Position.Y = (floorYPosition - gameObject.Height())
+	if (gameObject.Position.Y + float64(gameObject.Height())) > float64(floorYPosition) {
+		gameObject.Position.Y = float64(floorYPosition - gameObject.Height())
 	}
 
 }

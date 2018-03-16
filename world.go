@@ -9,7 +9,7 @@ import (
 // World is a struct that defines a single world of a game
 type World struct {
 	BackgroundColour color.RGBA
-	Gravity          int
+	Gravity          float64
 	GameObjects      []*GameObject
 	Game             *Game
 }
@@ -31,7 +31,7 @@ func (world *World) Repaint(stage *image.RGBA) {
 			gameObject.Flipped = false
 		}
 
-		gameObject.Sprite.AddToCanvas(stage, gameObject.Position.X, gameObject.Position.Y, gameObject.Flipped)
+		gameObject.Sprite.AddToCanvas(stage, int(gameObject.Position.X), int(gameObject.Position.Y), gameObject.Flipped)
 
 	}
 
