@@ -13,7 +13,7 @@ import (
 )
 
 // GenerateFromPNGFile generates a SpriteGroup package file from an image on disk
-func GenerateFromPNGFile(inputFile string, outputFile string, packageName string, exportedSpriteName string) {
+func GenerateFromPNGFile(inputFile string, outputFile string, packageName string, exportedSpriteName string, palettes ...Palette) {
 
 	imgFile, imgFileErr := os.Open(inputFile)
 	imgFileConfig, imgFileConfErr := os.Open(inputFile)
@@ -36,31 +36,41 @@ func GenerateFromPNGFile(inputFile string, outputFile string, packageName string
 		log.Fatal("The image width and/or height was not a multiple of 16")
 	}
 
-	// Figure out the palette first
-	tempPalette := map[string]color.RGBA{}
+	palette := Palette{}
 
-	for x := 0; x < config.Width; x++ {
+	// If a palette has been provided, use that
+	if len(palettes) > 0 {
 
-		for y := 0; y < config.Height; y++ {
+		palette = palettes[0]
 
-			colourString, colourRGBA := getColourStringAndRGBA(img.At(x, y))
-			tempPalette[colourString] = colourRGBA
+		// Otherwise, generate one based on the image
+	} else {
+
+		tempPalette := Palette{}
+
+		for x := 0; x < config.Width; x++ {
+
+			for y := 0; y < config.Height; y++ {
+
+				colourString, colourRGBA := getColourStringAndRGBA(img.At(x, y))
+				tempPalette[colourString] = colourRGBA
+
+			}
 
 		}
 
-	}
+		if len(tempPalette) > 16 {
+			log.Fatal("More than 16 colours used in image palette")
+		}
 
-	if len(tempPalette) > 16 {
-		log.Fatal("More than 16 colours used in image palette")
-	}
+		paletteSlots := []string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"}
+		slotCount := 0
 
-	palette := map[string]color.RGBA{}
-	paletteSlots := []string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"}
-	slotCount := 0
+		for _, colour := range tempPalette {
+			palette[paletteSlots[slotCount]] = colour
+			slotCount++
+		}
 
-	for _, colour := range tempPalette {
-		palette[paletteSlots[slotCount]] = colour
-		slotCount++
 	}
 
 	// Get the palette slots for each pixel
@@ -94,7 +104,7 @@ func GenerateFromPNGFile(inputFile string, outputFile string, packageName string
 
 	// Palette
 	paletteName := "palette_" + packageName
-	paletteString := "var " + paletteName + " = &map[string]color.RGBA{"
+	paletteString := "var " + paletteName + " = &spritengine.Palette{"
 
 	for paletteSlot, colour := range palette {
 		paletteString += `"` + paletteSlot + `": color.RGBA{` + strconv.Itoa(int(colour.R)) + `,` + strconv.Itoa(int(colour.G)) + `,` + strconv.Itoa(int(colour.B)) + `,` + strconv.Itoa(int(colour.A)) + `},`

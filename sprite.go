@@ -4,19 +4,18 @@ import (
 	"errors"
 	"fmt"
 	"image"
-	"image/color"
 	"image/draw"
 	"strings"
 )
 
 // Sprite is a struct that represents sprite objects
 type Sprite struct {
-	Palette   *map[string]color.RGBA
+	Palette   *Palette
 	Scanlines *[]int
 }
 
 // CreateSprite creates a sprite object based on a set of hex-encoded scanlines
-func CreateSprite(palette *map[string]color.RGBA, scanlines []int) (*Sprite, error) {
+func CreateSprite(palette *Palette, scanlines []int) (*Sprite, error) {
 
 	if len(scanlines) != 32 {
 		return nil, errors.New("Sprite not represented by the 32 hex groups required")
