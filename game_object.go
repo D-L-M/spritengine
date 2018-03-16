@@ -24,7 +24,7 @@ type GameObject struct {
 func (gameObject *GameObject) IsJumping() bool {
 
 	// TODO: Change this so that it acts on objects beneath the game object
-	floorYPosition := 240
+	floorYPosition := gameObject.Level.Game.Height
 
 	// Special case for floating objects
 	if gameObject.Mass == 0 {
