@@ -17,8 +17,8 @@ type Level struct {
 // Repaint redraws the entire level for a new frame
 func (level *Level) Repaint(stage *image.RGBA) {
 
-	// Add background
-	draw.Draw(stage, stage.Bounds(), &image.Uniform{color.RGBA{0, 138, 197, 255}}, image.ZP, draw.Src)
+	// Paint the background colour
+	draw.Draw(stage, stage.Bounds(), &image.Uniform{level.BackgroundColour}, image.ZP, draw.Src)
 
 	// Update each game object
 	for _, gameObject := range level.GameObjects {
