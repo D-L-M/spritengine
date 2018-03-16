@@ -54,7 +54,7 @@ func createWindow(game *Game) {
 
 				stage := image.NewRGBA(image.Rect(0, 0, game.Width, game.Height))
 
-				game.FramePainter(stage, game.CurrentWorld, currentFrameRate)
+				game.FramePainter(stage, game.CurrentWorld(), currentFrameRate)
 				xdraw.NearestNeighbor.Scale(buf.RGBA(), image.Rect(0, 0, game.Width*game.ScaleFactor, game.Height*game.ScaleFactor), stage, stage.Bounds(), draw.Over, nil)
 				win.Upload(image.Point{}, buf, buf.Bounds())
 				win.Publish()
