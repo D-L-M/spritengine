@@ -103,7 +103,7 @@ func GenerateFromPNGFile(inputFile string, outputFile string, packageName string
 	spriteNames := []string{}
 
 	// Palette
-	paletteName := "palette_" + packageName
+	paletteName := "palette_" + exportedSpriteName
 	paletteString := "var " + paletteName + " = &spritengine.Palette{"
 
 	for paletteSlot, colour := range palette {
@@ -117,7 +117,7 @@ func GenerateFromPNGFile(inputFile string, outputFile string, packageName string
 
 		for x := 0; x < (config.Width / 16); x++ {
 
-			spriteName := "sprite_" + packageName + "_" + strconv.Itoa(x) + "_" + strconv.Itoa(y)
+			spriteName := "sprite_" + exportedSpriteName + "_" + strconv.Itoa(x) + "_" + strconv.Itoa(y)
 			spriteString := "var " + spriteName + ", _ = spritengine.CreateSprite(" + paletteName + ", []int{"
 			spriteNames = append(spriteNames, spriteName)
 
