@@ -65,6 +65,7 @@ func createWindow(game *Game) {
 				// Key presses
 			case key.Event:
 
+				game.BroadcastInput(e)
 				game.KeyListener(e)
 
 			}
