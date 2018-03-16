@@ -6,7 +6,8 @@ import (
 
 // GameObject represents a sprite and its properties
 type GameObject struct {
-	Sprite          SpriteInterface
+	CurrentSprite   SpriteInterface
+	States          GameObjectStates
 	Position        Vector
 	Mass            float64
 	CurrentVelocity Vector
@@ -19,7 +20,10 @@ type GameObject struct {
 }
 
 // IsJumping determined whether the game object is currently jumping
-func (gameObject *GameObject) IsJumping(floorYPosition int) bool {
+func (gameObject *GameObject) IsJumping() bool {
+
+	// TODO: Change this so that it acts on objects beneath the game object
+	floorYPosition := 240
 
 	// Special case for floating objects
 	if gameObject.Mass == 0 {
@@ -30,17 +34,40 @@ func (gameObject *GameObject) IsJumping(floorYPosition int) bool {
 
 }
 
+// NextSprite gets the current sprite for the object's state
+func (gameObject *GameObject) NextSprite() SpriteInterface {
+
+	sprite := gameObject.States["default"]
+
+	if gameObject.Direction == DirLeft || gameObject.Direction == DirRight {
+		sprite = gameObject.States["moving"]
+	}
+
+	if gameObject.IsJumping() {
+		sprite = gameObject.States["jumping"]
+	}
+
+	gameObject.CurrentSprite = sprite
+
+	return sprite
+
+}
+
 // Width gets the width of the game object
 func (gameObject *GameObject) Width() int {
 
-	return gameObject.Sprite.Width()
+	return gameObject.NextSprite().Width()
 
 }
 
 // Height gets the height of the game object
 func (gameObject *GameObject) Height() int {
 
-	return gameObject.Sprite.Height()
+	if gameObject.CurrentSprite == nil {
+		return 16
+	}
+
+	return gameObject.CurrentSprite.Height()
 
 }
 
@@ -74,14 +101,11 @@ func (gameObject *GameObject) RecalculatePosition(gravity float64, floorYPositio
 // ActOnInputEvent repositions the game object based on an input event
 func (gameObject *GameObject) ActOnInputEvent(event key.Event) {
 
-	// TODO: Change this so that it acts on objects beneath the game object
-	height := 240
-
 	switch event.Code {
 
 	case key.CodeLeftArrow:
 
-		if event.Direction == key.DirPress && gameObject.IsJumping(height) == false && gameObject.Direction == DirStationary {
+		if event.Direction == key.DirPress && gameObject.IsJumping() == false && gameObject.Direction == DirStationary {
 			gameObject.Direction = DirLeft
 		} else if event.Direction == key.DirRelease && gameObject.Direction == DirLeft {
 			gameObject.Direction = DirStationary
@@ -89,7 +113,7 @@ func (gameObject *GameObject) ActOnInputEvent(event key.Event) {
 
 	case key.CodeRightArrow:
 
-		if event.Direction == key.DirPress && gameObject.IsJumping(height) == false && gameObject.Direction == DirStationary {
+		if event.Direction == key.DirPress && gameObject.IsJumping() == false && gameObject.Direction == DirStationary {
 			gameObject.Direction = DirRight
 		} else if event.Direction == key.DirRelease && gameObject.Direction == DirRight {
 			gameObject.Direction = DirStationary
@@ -105,7 +129,7 @@ func (gameObject *GameObject) ActOnInputEvent(event key.Event) {
 
 	case key.CodeSpacebar:
 
-		if event.Direction == key.DirPress && gameObject.IsJumping(height) == false {
+		if event.Direction == key.DirPress && gameObject.IsJumping() == false {
 
 			if gameObject.FastMoving == true {
 				gameObject.CurrentVelocity.Y = gameObject.FastVelocity.Y

@@ -31,7 +31,7 @@ func (level *Level) Repaint(stage *image.RGBA) {
 			gameObject.Flipped = false
 		}
 
-		gameObject.Sprite.AddToCanvas(stage, int(gameObject.Position.X), int(gameObject.Position.Y), gameObject.Flipped)
+		gameObject.NextSprite().AddToCanvas(stage, int(gameObject.Position.X), int(gameObject.Position.Y), gameObject.Flipped)
 
 	}
 
