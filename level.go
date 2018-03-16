@@ -6,24 +6,24 @@ import (
 	"image/draw"
 )
 
-// World is a struct that defines a single world of a game
-type World struct {
+// Level is a struct that defines a single level of a game
+type Level struct {
 	BackgroundColour color.RGBA
 	Gravity          float64
 	GameObjects      []*GameObject
 	Game             *Game
 }
 
-// Repaint redraws the entire world for a new frame
-func (world *World) Repaint(stage *image.RGBA) {
+// Repaint redraws the entire level for a new frame
+func (level *Level) Repaint(stage *image.RGBA) {
 
 	// Add background
 	draw.Draw(stage, stage.Bounds(), &image.Uniform{color.RGBA{0, 138, 197, 255}}, image.ZP, draw.Src)
 
 	// Update each game object
-	for _, gameObject := range world.GameObjects {
+	for _, gameObject := range level.GameObjects {
 
-		gameObject.RecalculatePosition(world.Gravity, world.Game.Height)
+		gameObject.RecalculatePosition(level.Gravity, level.Game.Height)
 
 		if gameObject.Direction == DirLeft {
 			gameObject.Flipped = true

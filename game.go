@@ -9,12 +9,12 @@ type Game struct {
 	TargetFrameRate int
 	FramePainter    FramePainter
 	KeyListener     KeyListener
-	Worlds          []*World
-	CurrentWorldID  int
+	Levels          []*Level
+	CurrentLevelID  int
 }
 
 // CreateGame sets up a game and its window
-func CreateGame(title string, width int, height int, scaleFactor int, targetFrameRate int, framePainter FramePainter, keyListener KeyListener, worlds []*World) *Game {
+func CreateGame(title string, width int, height int, scaleFactor int, targetFrameRate int, framePainter FramePainter, keyListener KeyListener, levels []*Level) *Game {
 
 	game := Game{
 		Title:           title,
@@ -24,12 +24,12 @@ func CreateGame(title string, width int, height int, scaleFactor int, targetFram
 		TargetFrameRate: targetFrameRate,
 		FramePainter:    framePainter,
 		KeyListener:     keyListener,
-		Worlds:          worlds,
-		CurrentWorldID:  0,
+		Levels:          levels,
+		CurrentLevelID:  0,
 	}
 
-	for _, world := range worlds {
-		world.Game = &game
+	for _, level := range levels {
+		level.Game = &game
 	}
 
 	createWindow(&game)
@@ -38,9 +38,9 @@ func CreateGame(title string, width int, height int, scaleFactor int, targetFram
 
 }
 
-// CurrentWorld gets the current World object
-func (game *Game) CurrentWorld() *World {
+// CurrentLevel gets the current Level object
+func (game *Game) CurrentLevel() *Level {
 
-	return game.Worlds[game.CurrentWorldID]
+	return game.Levels[game.CurrentLevelID]
 
 }
