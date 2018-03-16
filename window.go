@@ -52,7 +52,7 @@ func createWindow(game *Game) {
 				game.CurrentFrame++
 
 				if game.CurrentFrame > game.TargetFrameRate {
-					game.CurrentFrame = 0
+					game.CurrentFrame = 1
 				}
 
 				lastPaintTimeNano = timeNowNano

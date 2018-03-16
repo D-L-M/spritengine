@@ -57,26 +57,39 @@ func (gameObject *GameObject) NextSprite() SpriteInterface {
 
 // getCurrentSpriteFrame gets the appropriate frame of a sprite series based on the
 // game's frame ticker
-func (gameObject *GameObject) getCurrentSpriteFrame(spriteSeries []SpriteInterface) SpriteInterface {
+func (gameObject *GameObject) getCurrentSpriteFrame(spriteSeries SpriteSeries) SpriteInterface {
 
 	spriteIndex := 0
 
 	if gameObject.Level != nil {
 
 		game := gameObject.Level.Game
-		frameChunk := game.TargetFrameRate / len(spriteSeries)
+		framesPerSprite := (game.TargetFrameRate / spriteSeries.CyclesPerSecond) / len(spriteSeries.Sprites)
+		spriteCounter := 0
+		i := 0
 
-		for i := range spriteSeries {
+		for j := 0; j < game.TargetFrameRate; j++ {
 
-			if game.CurrentFrame > i*frameChunk {
-				spriteIndex = i
+			i++
+
+			if i == framesPerSprite {
+				i = 0
+				spriteCounter++
+			}
+
+			if spriteCounter >= len(spriteSeries.Sprites) {
+				spriteCounter = 0
+			}
+
+			if j == game.CurrentFrame {
+				spriteIndex = spriteCounter
 			}
 
 		}
 
 	}
 
-	return spriteSeries[spriteIndex]
+	return spriteSeries.Sprites[spriteIndex]
 
 }
 
