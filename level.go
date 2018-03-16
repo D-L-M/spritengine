@@ -23,6 +23,7 @@ func (level *Level) Repaint(stage *image.RGBA) {
 	// Update each game object
 	for _, gameObject := range level.GameObjects {
 
+		gameObject.Level = level
 		gameObject.RecalculatePosition(level.Gravity, level.Game.Height)
 
 		if gameObject.Direction == DirLeft {

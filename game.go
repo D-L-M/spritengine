@@ -15,6 +15,7 @@ type Game struct {
 	KeyListener     KeyListener
 	Levels          []*Level
 	CurrentLevelID  int
+	CurrentFrame    int
 }
 
 // CreateGame sets up a game and its window
@@ -30,6 +31,7 @@ func CreateGame(title string, width int, height int, scaleFactor int, targetFram
 		KeyListener:     keyListener,
 		Levels:          levels,
 		CurrentLevelID:  0,
+		CurrentFrame:    0,
 	}
 
 	for _, level := range levels {

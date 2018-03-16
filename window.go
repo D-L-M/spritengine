@@ -48,6 +48,13 @@ func createWindow(game *Game) {
 					frameAgeNano = targetFrameAgeNano
 				}
 
+				// TODO: Move this code into the Game object?
+				game.CurrentFrame++
+
+				if game.CurrentFrame > game.TargetFrameRate {
+					game.CurrentFrame = 0
+				}
+
 				lastPaintTimeNano = timeNowNano
 				frameAgeSeconds := (float64(frameAgeNano) / float64(1000000000))
 				currentFrameRate := 1 / frameAgeSeconds

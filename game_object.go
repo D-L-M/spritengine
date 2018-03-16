@@ -17,6 +17,7 @@ type GameObject struct {
 	Flipped         bool
 	Controllable    bool
 	FastMoving      bool
+	Level           *Level
 }
 
 // IsJumping determined whether the game object is currently jumping
@@ -37,19 +38,45 @@ func (gameObject *GameObject) IsJumping() bool {
 // NextSprite gets the current sprite for the object's state
 func (gameObject *GameObject) NextSprite() SpriteInterface {
 
-	sprite := gameObject.States["default"]
+	spriteSeries := gameObject.States["default"]
 
 	if gameObject.Direction == DirLeft || gameObject.Direction == DirRight {
-		sprite = gameObject.States["moving"]
+		spriteSeries = gameObject.States["moving"]
 	}
 
 	if gameObject.IsJumping() {
-		sprite = gameObject.States["jumping"]
+		spriteSeries = gameObject.States["jumping"]
 	}
 
+	sprite := gameObject.getCurrentSpriteFrame(spriteSeries)
 	gameObject.CurrentSprite = sprite
 
 	return sprite
+
+}
+
+// getCurrentSpriteFrame gets the appropriate frame of a sprite series based on the
+// game's frame ticker
+func (gameObject *GameObject) getCurrentSpriteFrame(spriteSeries []SpriteInterface) SpriteInterface {
+
+	spriteIndex := 0
+
+	if gameObject.Level != nil {
+
+		game := gameObject.Level.Game
+		frameChunk := game.TargetFrameRate / len(spriteSeries)
+
+		for i := range spriteSeries {
+
+			if game.CurrentFrame > i*frameChunk {
+				spriteIndex = i
+			}
+
+		}
+
+	}
+
+	return spriteSeries[spriteIndex]
 
 }
 
