@@ -6,17 +6,18 @@ import (
 
 // GameObject represents a sprite and its properties
 type GameObject struct {
-	States          GameObjectStates
-	Position        Vector
-	Mass            float64
-	CurrentVelocity Vector
-	SlowVelocity    Vector
-	FastVelocity    Vector
-	Direction       int
-	Flipped         bool
-	Controllable    bool
-	FastMoving      bool
-	Level           *Level
+	CurrentState string
+	States       GameObjectStates
+	Position     Vector
+	Mass         float64
+	Velocity     Vector
+	SlowVelocity Vector // TODO: Get rid of this concept
+	FastVelocity Vector // TODO: Get rid of this concept
+	Direction    int
+	Flipped      bool
+	Controllable bool
+	FastMoving   bool // TODO: Get rid of this concept
+	Level        *Level
 }
 
 // IsJumping determined whether the game object is currently jumping
@@ -37,16 +38,7 @@ func (gameObject *GameObject) IsJumping() bool {
 // CurrentSprite gets the current sprite for the object's state
 func (gameObject *GameObject) CurrentSprite() SpriteInterface {
 
-	spriteSeries := gameObject.States["default"]
-
-	if gameObject.Direction == DirLeft || gameObject.Direction == DirRight {
-		spriteSeries = gameObject.States["moving"]
-	}
-
-	if gameObject.IsJumping() {
-		spriteSeries = gameObject.States["jumping"]
-	}
-
+	spriteSeries := gameObject.States[gameObject.CurrentState]
 	sprite := gameObject.getCurrentSpriteFrame(spriteSeries)
 
 	return sprite
@@ -110,6 +102,7 @@ func (gameObject *GameObject) RecalculatePosition(gravity float64, floorYPositio
 
 	xVelocity := gameObject.SlowVelocity.X
 
+	// TODO: Move this out to a method that the user writes, as per the below
 	if gameObject.FastMoving == true {
 		xVelocity = gameObject.FastVelocity.X
 	}
@@ -122,17 +115,28 @@ func (gameObject *GameObject) RecalculatePosition(gravity float64, floorYPositio
 	}
 
 	// Jump up (and/or be pulled down by gravity)
-	gameObject.Position.Y += gameObject.CurrentVelocity.Y
-	gameObject.CurrentVelocity.Y -= (gravity * gameObject.Mass)
+	gameObject.Position.Y += gameObject.Velocity.Y
+	gameObject.Velocity.Y -= (gravity * gameObject.Mass)
 
 	// Ensure the floor object acts as a barrier
 	if gameObject.Position.Y < float64(floorYPosition) {
+
 		gameObject.Position.Y = float64(floorYPosition)
+
+		// TODO: Make a method that can be called that the user provides on
+		// events like this so they can choose to update the state
+		if gameObject.Direction == DirStationary {
+			gameObject.CurrentState = "standing"
+		} else {
+			gameObject.CurrentState = "moving"
+		}
+
 	}
 
 }
 
 // ActOnInputEvent repositions the game object based on an input event
+// TODO: Move this back out so that the user writes this logic?
 func (gameObject *GameObject) ActOnInputEvent(event key.Event) {
 
 	switch event.Code {
@@ -141,16 +145,20 @@ func (gameObject *GameObject) ActOnInputEvent(event key.Event) {
 
 		if event.Direction == key.DirPress && gameObject.IsJumping() == false && gameObject.Direction == DirStationary {
 			gameObject.Direction = DirLeft
+			gameObject.CurrentState = "moving"
 		} else if event.Direction == key.DirRelease && gameObject.Direction == DirLeft {
 			gameObject.Direction = DirStationary
+			gameObject.CurrentState = "standing"
 		}
 
 	case key.CodeRightArrow:
 
 		if event.Direction == key.DirPress && gameObject.IsJumping() == false && gameObject.Direction == DirStationary {
 			gameObject.Direction = DirRight
+			gameObject.CurrentState = "moving"
 		} else if event.Direction == key.DirRelease && gameObject.Direction == DirRight {
 			gameObject.Direction = DirStationary
+			gameObject.CurrentState = "standing"
 		}
 
 	case key.CodeLeftShift, key.CodeRightShift:
@@ -165,10 +173,12 @@ func (gameObject *GameObject) ActOnInputEvent(event key.Event) {
 
 		if event.Direction == key.DirPress && gameObject.IsJumping() == false {
 
+			gameObject.CurrentState = "jumping"
+
 			if gameObject.FastMoving == true {
-				gameObject.CurrentVelocity.Y = gameObject.FastVelocity.Y
+				gameObject.Velocity.Y = gameObject.FastVelocity.Y
 			} else {
-				gameObject.CurrentVelocity.Y = gameObject.SlowVelocity.Y
+				gameObject.Velocity.Y = gameObject.SlowVelocity.Y
 			}
 
 		}
