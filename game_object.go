@@ -113,10 +113,14 @@ func (gameObject *GameObject) RecalculatePosition(gravity float64, floorYPositio
 
 		// TODO: Make a method that can be called that the user provides on
 		// events like this so they can choose to update the state
-		if gameObject.Direction == DirStationary {
-			gameObject.CurrentState = "standing"
-		} else {
-			gameObject.CurrentState = "moving"
+		if gameObject.Controllable == true {
+
+			if gameObject.Direction == DirStationary {
+				gameObject.CurrentState = "standing"
+			} else {
+				gameObject.CurrentState = "moving"
+			}
+
 		}
 
 	}
