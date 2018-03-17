@@ -1,9 +1,5 @@
 package spritengine
 
-import (
-	"golang.org/x/mobile/event/key"
-)
-
 // GameObject represents a sprite and its properties
 type GameObject struct {
 	CurrentState string
@@ -11,17 +7,15 @@ type GameObject struct {
 	Position     Vector
 	Mass         float64
 	Velocity     Vector
-	SlowVelocity Vector // TODO: Get rid of this concept
-	FastVelocity Vector // TODO: Get rid of this concept
 	Direction    int
 	Flipped      bool
 	Controllable bool
-	FastMoving   bool // TODO: Get rid of this concept
 	Level        *Level
 }
 
-// IsJumping determined whether the game object is currently jumping
-func (gameObject *GameObject) IsJumping() bool {
+// IsResting determined whether the game object is currently atop another game
+// object
+func (gameObject *GameObject) IsResting() bool {
 
 	// TODO: Change this so that it acts on objects beneath the game object
 	floorYPosition := 0
@@ -31,7 +25,7 @@ func (gameObject *GameObject) IsJumping() bool {
 		return false
 	}
 
-	return int(gameObject.Position.Y) > floorYPosition
+	return int(gameObject.Position.Y) == floorYPosition
 
 }
 
@@ -100,18 +94,11 @@ func (gameObject *GameObject) Height() int {
 // RecalculatePosition recalculates the latest X and Y position of the game object from its properties
 func (gameObject *GameObject) RecalculatePosition(gravity float64, floorYPosition int) {
 
-	xVelocity := gameObject.SlowVelocity.X
-
-	// TODO: Move this out to a method that the user writes, as per the below
-	if gameObject.FastMoving == true {
-		xVelocity = gameObject.FastVelocity.X
-	}
-
 	// Move left or right
 	if gameObject.Direction == DirRight {
-		gameObject.Position.X += xVelocity
+		gameObject.Position.X += gameObject.Velocity.X
 	} else if gameObject.Direction == DirLeft {
-		gameObject.Position.X -= xVelocity
+		gameObject.Position.X -= gameObject.Velocity.X
 	}
 
 	// Jump up (and/or be pulled down by gravity)
@@ -129,58 +116,6 @@ func (gameObject *GameObject) RecalculatePosition(gravity float64, floorYPositio
 			gameObject.CurrentState = "standing"
 		} else {
 			gameObject.CurrentState = "moving"
-		}
-
-	}
-
-}
-
-// ActOnInputEvent repositions the game object based on an input event
-// TODO: Move this back out so that the user writes this logic?
-func (gameObject *GameObject) ActOnInputEvent(event key.Event) {
-
-	switch event.Code {
-
-	case key.CodeLeftArrow:
-
-		if event.Direction == key.DirPress && gameObject.IsJumping() == false && gameObject.Direction == DirStationary {
-			gameObject.Direction = DirLeft
-			gameObject.CurrentState = "moving"
-		} else if event.Direction == key.DirRelease && gameObject.Direction == DirLeft {
-			gameObject.Direction = DirStationary
-			gameObject.CurrentState = "standing"
-		}
-
-	case key.CodeRightArrow:
-
-		if event.Direction == key.DirPress && gameObject.IsJumping() == false && gameObject.Direction == DirStationary {
-			gameObject.Direction = DirRight
-			gameObject.CurrentState = "moving"
-		} else if event.Direction == key.DirRelease && gameObject.Direction == DirRight {
-			gameObject.Direction = DirStationary
-			gameObject.CurrentState = "standing"
-		}
-
-	case key.CodeLeftShift, key.CodeRightShift:
-
-		if event.Direction == key.DirPress || event.Direction == key.Direction(10) {
-			gameObject.FastMoving = true
-		} else if event.Direction == key.DirRelease || event.Direction == key.Direction(11) {
-			gameObject.FastMoving = false
-		}
-
-	case key.CodeSpacebar:
-
-		if event.Direction == key.DirPress && gameObject.IsJumping() == false {
-
-			gameObject.CurrentState = "jumping"
-
-			if gameObject.FastMoving == true {
-				gameObject.Velocity.Y = gameObject.FastVelocity.Y
-			} else {
-				gameObject.Velocity.Y = gameObject.SlowVelocity.Y
-			}
-
 		}
 
 	}

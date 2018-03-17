@@ -27,12 +27,12 @@ func createWindow(game *Game) {
 
 		for {
 
-			switch e := win.NextEvent().(type) {
+			switch event := win.NextEvent().(type) {
 
 			// Close the window
 			case lifecycle.Event:
 
-				if e.To == lifecycle.StageDead {
+				if event.To == lifecycle.StageDead {
 					return
 				}
 
@@ -71,10 +71,7 @@ func createWindow(game *Game) {
 
 				// Key presses
 			case key.Event:
-
-				game.BroadcastInput(e)
-				game.KeyListener(e)
-
+				game.BroadcastInput(event)
 			}
 
 		}

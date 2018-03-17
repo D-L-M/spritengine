@@ -57,7 +57,7 @@ func (game *Game) BroadcastInput(event key.Event) {
 	for _, gameObject := range game.CurrentLevel().GameObjects {
 
 		if gameObject.Controllable == true {
-			gameObject.ActOnInputEvent(event)
+			game.KeyListener(event, gameObject)
 		}
 
 	}
