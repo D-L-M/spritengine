@@ -6,7 +6,6 @@ import (
 
 // GameObject represents a sprite and its properties
 type GameObject struct {
-	CurrentSprite   SpriteInterface
 	States          GameObjectStates
 	Position        Vector
 	Mass            float64
@@ -24,19 +23,19 @@ type GameObject struct {
 func (gameObject *GameObject) IsJumping() bool {
 
 	// TODO: Change this so that it acts on objects beneath the game object
-	floorYPosition := gameObject.Level.Game.Height
+	floorYPosition := 0
 
 	// Special case for floating objects
 	if gameObject.Mass == 0 {
 		return false
 	}
 
-	return (int(gameObject.Position.Y) + gameObject.Height()) < floorYPosition
+	return int(gameObject.Position.Y) > floorYPosition
 
 }
 
-// NextSprite gets the current sprite for the object's state
-func (gameObject *GameObject) NextSprite() SpriteInterface {
+// CurrentSprite gets the current sprite for the object's state
+func (gameObject *GameObject) CurrentSprite() SpriteInterface {
 
 	spriteSeries := gameObject.States["default"]
 
@@ -49,7 +48,6 @@ func (gameObject *GameObject) NextSprite() SpriteInterface {
 	}
 
 	sprite := gameObject.getCurrentSpriteFrame(spriteSeries)
-	gameObject.CurrentSprite = sprite
 
 	return sprite
 
@@ -96,18 +94,14 @@ func (gameObject *GameObject) getCurrentSpriteFrame(spriteSeries SpriteSeries) S
 // Width gets the width of the game object
 func (gameObject *GameObject) Width() int {
 
-	return gameObject.NextSprite().Width()
+	return gameObject.CurrentSprite().Width()
 
 }
 
 // Height gets the height of the game object
 func (gameObject *GameObject) Height() int {
 
-	if gameObject.CurrentSprite == nil {
-		return 16
-	}
-
-	return gameObject.CurrentSprite.Height()
+	return gameObject.CurrentSprite().Height()
 
 }
 
@@ -128,12 +122,12 @@ func (gameObject *GameObject) RecalculatePosition(gravity float64, floorYPositio
 	}
 
 	// Jump up (and/or be pulled down by gravity)
-	gameObject.Position.Y -= gameObject.CurrentVelocity.Y
+	gameObject.Position.Y += gameObject.CurrentVelocity.Y
 	gameObject.CurrentVelocity.Y -= (gravity * gameObject.Mass)
 
 	// Ensure the floor object acts as a barrier
-	if (gameObject.Position.Y + float64(gameObject.Height())) > float64(floorYPosition) {
-		gameObject.Position.Y = float64(floorYPosition - gameObject.Height())
+	if gameObject.Position.Y < float64(floorYPosition) {
+		gameObject.Position.Y = float64(floorYPosition)
 	}
 
 }
