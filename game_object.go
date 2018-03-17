@@ -11,6 +11,7 @@ type GameObject struct {
 	Flipped      bool
 	Controllable bool
 	Level        *Level
+	DynamicData  DynamicData
 }
 
 // IsResting determined whether the game object is currently atop another game
