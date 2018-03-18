@@ -146,3 +146,22 @@ func (gameObject *GameObject) RecalculatePosition(gravity float64) {
 	}
 
 }
+
+// SetDynamicData sets a piece of dynamic game object data
+func (gameObject *GameObject) SetDynamicData(key string, value interface{}) {
+
+	gameObject.DynamicData[key] = value
+
+}
+
+// GetDynamicData gets a piece of dynamic game object data, falling back to a
+// defined value if the data does not exist
+func (gameObject *GameObject) GetDynamicData(key string, fallback interface{}) interface{} {
+
+	if value, ok := gameObject.DynamicData[key]; ok {
+		return value
+	}
+
+	return fallback
+
+}
