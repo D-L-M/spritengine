@@ -13,6 +13,7 @@ type GameObject struct {
 	Level        *Level
 	DynamicData  DynamicData
 	FloorY       float64
+	Interactive  bool
 }
 
 // IsResting determined whether the game object is currently atop another game
@@ -132,8 +133,14 @@ func (gameObject *GameObject) RecalculatePosition(gravity float64) {
 
 		minYPos := (0 - float64(gameObject.Height()))
 
-		if gameObject.Position.Y < minYPos {
+		if gameObject.Position.Y <= minYPos {
+
 			gameObject.Position.Y = minYPos
+
+			// Mark as non-interactive
+			// TODO: Move this out to a collision event with the absolute floor (0 - height)
+			gameObject.Interactive = false
+
 		}
 
 	}

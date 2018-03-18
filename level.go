@@ -54,6 +54,11 @@ func (level *Level) AssignFloors() {
 	// Make a map of each object's possible X positions
 	for _, gameObject := range level.GameObjects {
 
+		// Skip non-interactive objects
+		if gameObject.Interactive == false {
+			continue
+		}
+
 		for i := 0; i < gameObject.Width(); i++ {
 
 			xPos := i + int(gameObject.Position.X)
