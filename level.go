@@ -71,7 +71,7 @@ func (level *Level) AssignFloors() {
 			continue
 		}
 
-		highestFloorObject := 0.0
+		highestFloorObject := float64(0 - gameObject.Height())
 
 		for i := 0; i < gameObject.Width(); i++ {
 
