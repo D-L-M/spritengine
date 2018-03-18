@@ -14,6 +14,9 @@ type FramePainter func(stage *image.RGBA, level *Level, frameRate float64)
 // controllable game objects
 type KeyListener func(event key.Event, gameObject *GameObject)
 
+// EventHandler is the signature for functions that handle game events
+type EventHandler func(eventCode int, gameObject *GameObject)
+
 // Vector is a struct to represent X/Y vectors
 type Vector struct {
 	X float64

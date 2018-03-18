@@ -14,6 +14,7 @@ type GameObject struct {
 	DynamicData  DynamicData
 	FloorY       float64
 	Interactive  bool
+	EventHandler EventHandler
 }
 
 // IsResting determined whether the game object is currently atop another game
@@ -104,25 +105,19 @@ func (gameObject *GameObject) RecalculatePosition(gravity float64) {
 
 	// Jump up (and/or be pulled down by gravity) if the floor is further down
 	if gameObject.FloorY <= gameObject.Position.Y {
+
+		gameObject.EventHandler(EventFreefall, gameObject)
+
 		gameObject.Position.Y += gameObject.Velocity.Y
 		gameObject.Velocity.Y -= (gravity * gameObject.Mass)
-	}
 
-	// Ensure the floor object acts as a barrier
-	if gameObject.Position.Y < gameObject.FloorY {
+		// Ensure the floor object acts as a barrier
+		if gameObject.Position.Y < gameObject.FloorY {
 
-		gameObject.Position.Y = gameObject.FloorY
-		gameObject.Velocity.Y = 0
+			gameObject.Position.Y = gameObject.FloorY
+			gameObject.Velocity.Y = 0
 
-		// TODO: Make a method that can be called that the user provides on
-		// events like this so they can choose to update the state
-		if gameObject.Controllable == true {
-
-			if gameObject.Direction == DirStationary {
-				gameObject.CurrentState = "standing"
-			} else {
-				gameObject.CurrentState = "moving"
-			}
+			gameObject.EventHandler(EventFloorCollision, gameObject)
 
 		}
 
@@ -137,9 +132,7 @@ func (gameObject *GameObject) RecalculatePosition(gravity float64) {
 
 			gameObject.Position.Y = minYPos
 
-			// Mark as non-interactive
-			// TODO: Move this out to a collision event with the absolute floor (0 - height)
-			gameObject.Interactive = false
+			gameObject.EventHandler(EventDropOffLevel, gameObject)
 
 		}
 
