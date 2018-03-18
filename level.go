@@ -17,9 +17,6 @@ type Level struct {
 // Repaint redraws the entire level for a new frame
 func (level *Level) Repaint(stage *image.RGBA) {
 
-	// TODO: Change this so that it acts on objects beneath the game object
-	floorYPosition := 0
-
 	// Paint the background colour
 	draw.Draw(stage, stage.Bounds(), &image.Uniform{level.BackgroundColour}, image.ZP, draw.Src)
 
@@ -27,7 +24,7 @@ func (level *Level) Repaint(stage *image.RGBA) {
 	for _, gameObject := range level.GameObjects {
 
 		gameObject.Level = level
-		gameObject.RecalculatePosition(level.Gravity, floorYPosition)
+		gameObject.RecalculatePosition(level.Gravity)
 
 		if gameObject.Direction == DirLeft {
 			gameObject.Flipped = true

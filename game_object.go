@@ -12,21 +12,19 @@ type GameObject struct {
 	Controllable bool
 	Level        *Level
 	DynamicData  DynamicData
+	FloorY       int
 }
 
 // IsResting determined whether the game object is currently atop another game
 // object
 func (gameObject *GameObject) IsResting() bool {
 
-	// TODO: Change this so that it acts on objects beneath the game object
-	floorYPosition := 0
-
 	// Special case for floating objects
 	if gameObject.Mass == 0 {
 		return false
 	}
 
-	return int(gameObject.Position.Y) == floorYPosition
+	return int(gameObject.Position.Y) == gameObject.FloorY
 
 }
 
@@ -92,8 +90,9 @@ func (gameObject *GameObject) Height() int {
 
 }
 
-// RecalculatePosition recalculates the latest X and Y position of the game object from its properties
-func (gameObject *GameObject) RecalculatePosition(gravity float64, floorYPosition int) {
+// RecalculatePosition recalculates the latest X and Y position of the game
+// object from its properties
+func (gameObject *GameObject) RecalculatePosition(gravity float64) {
 
 	// Move left or right
 	if gameObject.Direction == DirRight {
@@ -107,9 +106,9 @@ func (gameObject *GameObject) RecalculatePosition(gravity float64, floorYPositio
 	gameObject.Velocity.Y -= (gravity * gameObject.Mass)
 
 	// Ensure the floor object acts as a barrier
-	if gameObject.Position.Y < float64(floorYPosition) {
+	if gameObject.Position.Y < float64(gameObject.FloorY) {
 
-		gameObject.Position.Y = float64(floorYPosition)
+		gameObject.Position.Y = float64(gameObject.FloorY)
 
 		// TODO: Make a method that can be called that the user provides on
 		// events like this so they can choose to update the state
