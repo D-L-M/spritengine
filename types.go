@@ -45,3 +45,10 @@ type GameObjectStates map[string]SpriteSeries
 // DynamicData is a type that defines a repository of arbitrary game object
 // data
 type DynamicData map[string]interface{}
+
+// Collision is a struct that represents a collision between two game objects
+type Collision struct {
+	Edge         string
+	FirstObject  GameObject
+	SecondObject GameObject
+}
