@@ -12,7 +12,7 @@ type GameObject struct {
 	Controllable bool
 	Level        *Level
 	DynamicData  DynamicData
-	FloorY       int
+	FloorY       float64
 }
 
 // IsResting determined whether the game object is currently atop another game
@@ -24,7 +24,7 @@ func (gameObject *GameObject) IsResting() bool {
 		return false
 	}
 
-	return int(gameObject.Position.Y) == gameObject.FloorY
+	return int(gameObject.Position.Y) == int(gameObject.FloorY)
 
 }
 
@@ -101,14 +101,17 @@ func (gameObject *GameObject) RecalculatePosition(gravity float64) {
 		gameObject.Position.X -= gameObject.Velocity.X
 	}
 
-	// Jump up (and/or be pulled down by gravity)
-	gameObject.Position.Y += gameObject.Velocity.Y
-	gameObject.Velocity.Y -= (gravity * gameObject.Mass)
+	// Jump up (and/or be pulled down by gravity) if the floor is further down
+	if gameObject.FloorY <= gameObject.Position.Y {
+		gameObject.Position.Y += gameObject.Velocity.Y
+		gameObject.Velocity.Y -= (gravity * gameObject.Mass)
+	}
 
 	// Ensure the floor object acts as a barrier
-	if gameObject.Position.Y < float64(gameObject.FloorY) {
+	if gameObject.Position.Y < gameObject.FloorY {
 
-		gameObject.Position.Y = float64(gameObject.FloorY)
+		gameObject.Position.Y = gameObject.FloorY
+		gameObject.Velocity.Y = 0
 
 		// TODO: Make a method that can be called that the user provides on
 		// events like this so they can choose to update the state
@@ -122,6 +125,13 @@ func (gameObject *GameObject) RecalculatePosition(gravity float64) {
 
 		}
 
+	}
+
+	// Only fall just off-screen
+	minYPos := (0 - float64(gameObject.Height()))
+
+	if gameObject.Position.Y < minYPos {
+		gameObject.Position.Y = minYPos
 	}
 
 }
