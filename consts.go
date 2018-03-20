@@ -9,9 +9,9 @@ const (
 
 // Event constants
 const (
-	EventFloorCollision = 0x00000001
-	EventDropOffLevel   = 0x00000010
-	EventFreefall       = 0x00000011
+	EventFloorCollision = 0
+	EventDropOffLevel   = 1
+	EventFreefall       = 2
 )
 
 // Collision edges
