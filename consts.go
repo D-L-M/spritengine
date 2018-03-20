@@ -13,3 +13,11 @@ const (
 	EventDropOffLevel   = 0x00000010
 	EventFreefall       = 0x00000011
 )
+
+// Collision edges
+const (
+	EdgeTop    = "top"
+	EdgeBottom = "bottom"
+	EdgeLeft   = "left"
+	EdgeRight  = "right"
+)

@@ -17,6 +17,9 @@ type KeyListener func(event key.Event, gameObject *GameObject)
 // EventHandler is the signature for functions that handle game events
 type EventHandler func(eventCode int, gameObject *GameObject)
 
+// CollisionHandler is the signature for functions that handle collision events
+type CollisionHandler func(gameObject *GameObject, collision Collision)
+
 // Vector is a struct to represent X/Y vectors
 type Vector struct {
 	X float64
@@ -51,7 +54,6 @@ type DynamicData map[string]interface{}
 
 // Collision is a struct that represents a collision between two game objects
 type Collision struct {
-	Edge         string
-	FirstObject  GameObject
-	SecondObject GameObject
+	GameObject *GameObject
+	Edge       string
 }

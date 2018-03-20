@@ -2,19 +2,20 @@ package spritengine
 
 // GameObject represents a sprite and its properties
 type GameObject struct {
-	CurrentState string
-	States       GameObjectStates
-	Position     Vector
-	Mass         float64
-	Velocity     Vector
-	Direction    int
-	Flipped      bool
-	Controllable bool
-	Level        *Level
-	DynamicData  DynamicData
-	FloorY       float64
-	Interactive  bool
-	EventHandler EventHandler
+	CurrentState     string
+	States           GameObjectStates
+	Position         Vector
+	Mass             float64
+	Velocity         Vector
+	Direction        int
+	Flipped          bool
+	Controllable     bool
+	Level            *Level
+	DynamicData      DynamicData
+	FloorY           float64
+	Interactive      bool
+	EventHandler     EventHandler
+	CollisionHandler CollisionHandler
 }
 
 // IsResting determined whether the game object is currently atop another game

@@ -20,6 +20,9 @@ func (level *Level) Repaint(stage *image.RGBA) {
 	// Figure out where all the floor objects are
 	level.AssignFloors()
 
+	// Figure out which objects are colliding
+	level.AssignCollisions()
+
 	// Paint the background colour
 	draw.Draw(stage, stage.Bounds(), &image.Uniform{level.BackgroundColour}, image.ZP, draw.Src)
 
@@ -105,6 +108,83 @@ func (level *Level) AssignFloors() {
 		}
 
 		gameObject.FloorY = highestFloorObject
+
+	}
+
+}
+
+// AssignCollisions iterates through all objects in the level and defines which
+// objects (if any) intersect them
+func (level *Level) AssignCollisions() {
+
+	xCoords := map[int][]*GameObject{}
+
+	// Make a map of each object's possible X positions
+	for _, gameObject := range level.GameObjects {
+
+		// Skip non-interactive objects
+		if gameObject.Interactive == false {
+			continue
+		}
+
+		for i := 0; i < gameObject.Width(); i++ {
+			xPos := i + int(gameObject.Position.X)
+			xCoords[xPos] = append(xCoords[xPos], gameObject)
+		}
+
+	}
+
+	// Find the objects that also intersect on the Y axis
+	for _, gameObject := range level.GameObjects {
+
+		intersections := map[*GameObject]bool{}
+		gameObjectYMin := gameObject.Position.Y
+		gameObjectYMax := gameObjectYMin + float64(gameObject.Height())
+
+		for i := 0; i < gameObject.Width(); i++ {
+
+			xPos := i + int(gameObject.Position.X)
+
+			if intersectingObjects, ok := xCoords[xPos]; ok {
+
+				for _, intersectingObject := range intersectingObjects {
+
+					// Ignore the object itself
+					if intersectingObject == gameObject {
+						continue
+					}
+
+					// Skip the object if it has already been stored
+					if _, ok := intersections[intersectingObject]; ok {
+						continue
+					}
+
+					intersectingObjectYMin := intersectingObject.Position.Y
+					intersectingObjectYMax := intersectingObjectYMin + float64(intersectingObject.Height())
+
+					if (gameObjectYMin >= intersectingObjectYMax || gameObjectYMax <= intersectingObjectYMin) == false {
+						intersections[intersectingObject] = true
+					}
+
+				}
+
+			}
+
+		}
+
+		// Let the game object know that there have been collisions
+		if len(intersections) > 0 {
+
+			for collidingObject := range intersections {
+
+				gameObject.CollisionHandler(gameObject, Collision{
+					GameObject: collidingObject,
+					Edge:       EdgeTop, // TODO: Figure out which edge the collision actually occurred on
+				})
+
+			}
+
+		}
 
 	}
 
