@@ -20,4 +20,5 @@ const (
 	EdgeBottom = "bottom"
 	EdgeLeft   = "left"
 	EdgeRight  = "right"
+	EdgeNone   = "none"
 )

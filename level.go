@@ -33,15 +33,15 @@ func (level *Level) Repaint(stage *image.RGBA) {
 		gameObject.RecalculatePosition(level.Gravity)
 
 		if gameObject.Direction == DirLeft {
-			gameObject.Flipped = true
+			gameObject.IsFlipped = true
 		} else if gameObject.Direction == DirRight {
-			gameObject.Flipped = false
+			gameObject.IsFlipped = false
 		}
 
 		// 0 is at the bottom, so flip the Y axis to paint correctly
 		invertedY := level.Game.Height - int(gameObject.Position.Y) - gameObject.Height()
 
-		gameObject.CurrentSprite().AddToCanvas(stage, int(gameObject.Position.X), invertedY, gameObject.Flipped)
+		gameObject.CurrentSprite().AddToCanvas(stage, int(gameObject.Position.X), invertedY, gameObject.IsFlipped)
 
 	}
 
@@ -57,8 +57,8 @@ func (level *Level) AssignFloors() {
 	// Make a map of each object's possible X positions
 	for _, gameObject := range level.GameObjects {
 
-		// Skip non-interactive objects
-		if gameObject.Interactive == false {
+		// Skip non-interactive and non-floor objects
+		if gameObject.IsInteractive == false || gameObject.IsFloor == false {
 			continue
 		}
 
@@ -123,7 +123,7 @@ func (level *Level) AssignCollisions() {
 	for _, gameObject := range level.GameObjects {
 
 		// Skip non-interactive objects
-		if gameObject.Interactive == false {
+		if gameObject.IsInteractive == false {
 			continue
 		}
 
@@ -179,7 +179,7 @@ func (level *Level) AssignCollisions() {
 
 				gameObject.CollisionHandler(gameObject, Collision{
 					GameObject: collidingObject,
-					Edge:       EdgeTop, // TODO: Figure out which edge the collision actually occurred on
+					Edge:       getCollisionEdge(gameObject, collidingObject),
 				})
 
 			}

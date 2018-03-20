@@ -8,12 +8,13 @@ type GameObject struct {
 	Mass             float64
 	Velocity         Vector
 	Direction        int
-	Flipped          bool
-	Controllable     bool
+	IsFlipped        bool
+	IsControllable   bool
 	Level            *Level
 	DynamicData      DynamicData
 	FloorY           float64
-	Interactive      bool
+	IsFloor          bool
+	IsInteractive    bool
 	EventHandler     EventHandler
 	CollisionHandler CollisionHandler
 }
@@ -157,5 +158,31 @@ func (gameObject *GameObject) GetDynamicData(key string, fallback interface{}) i
 	}
 
 	return fallback
+
+}
+
+// getCollisionEdge infers the edge on which two intersecting objects collided
+func getCollisionEdge(gameObject *GameObject, collidingObject *GameObject) string {
+
+	gameObjectTop := gameObject.Position.Y + float64(gameObject.Height())
+	collidingObjectTop := collidingObject.Position.Y + float64(collidingObject.Height())
+	gameObjectRight := gameObject.Position.X + float64(gameObject.Width())
+	collidingObjectRight := collidingObject.Position.X + float64(collidingObject.Width())
+	bottomCollision := gameObjectTop - collidingObject.Position.Y
+	topCollision := collidingObjectTop - gameObject.Position.Y
+	leftCollision := gameObjectRight - collidingObject.Position.X
+	rightCollision := collidingObjectRight - gameObject.Position.X
+
+	if topCollision < bottomCollision && topCollision < leftCollision && topCollision < rightCollision {
+		return EdgeTop
+	} else if bottomCollision < topCollision && bottomCollision < leftCollision && bottomCollision < rightCollision {
+		return EdgeBottom
+	} else if leftCollision < rightCollision && leftCollision < topCollision && leftCollision < bottomCollision {
+		return EdgeLeft
+	} else if rightCollision < leftCollision && rightCollision < topCollision && rightCollision < bottomCollision {
+		return EdgeRight
+	} else {
+		return EdgeNone
+	}
 
 }
