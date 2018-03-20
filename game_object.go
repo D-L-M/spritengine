@@ -126,10 +126,10 @@ func (gameObject *GameObject) RecalculatePosition(gravity float64) {
 
 	}
 
-	// Only fall just off-screen if not floating
+	// Don't fall too far off-screen
 	if gameObject.Mass != 0 {
 
-		minYPos := (0 - float64(gameObject.Height()))
+		minYPos := -1000.00
 
 		if gameObject.Position.Y <= minYPos {
 
@@ -159,6 +159,24 @@ func (gameObject *GameObject) GetDynamicData(key string, fallback interface{}) i
 	}
 
 	return fallback
+
+}
+
+// HasDynamicData checks whether a piece of dynamic game object data exists
+func (gameObject *GameObject) HasDynamicData(key string) bool {
+
+	if _, ok := gameObject.DynamicData[key]; ok {
+		return true
+	}
+
+	return false
+
+}
+
+// ClearDynamicData clears a piece of dynamic game object data
+func (gameObject *GameObject) ClearDynamicData(key string) {
+
+	delete(gameObject.DynamicData, key)
 
 }
 
