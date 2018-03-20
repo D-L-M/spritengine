@@ -162,28 +162,53 @@ func (gameObject *GameObject) GetDynamicData(key string, fallback interface{}) i
 
 }
 
-// getCollisionEdge infers the edge on which two intersecting objects collided
-func getCollisionEdge(gameObject *GameObject, collidingObject *GameObject) string {
+// GetCollisionEdge infers the edge on which an intersecting object collided
+// with the game object
+func (gameObject *GameObject) GetCollisionEdge(collidingObject *GameObject) string {
 
-	gameObjectTop := gameObject.Position.Y + float64(gameObject.Height())
-	collidingObjectTop := collidingObject.Position.Y + float64(collidingObject.Height())
-	gameObjectRight := gameObject.Position.X + float64(gameObject.Width())
-	collidingObjectRight := collidingObject.Position.X + float64(collidingObject.Width())
-	bottomCollision := gameObjectTop - collidingObject.Position.Y
-	topCollision := collidingObjectTop - gameObject.Position.Y
-	leftCollision := gameObjectRight - collidingObject.Position.X
-	rightCollision := collidingObjectRight - gameObject.Position.X
+	// Work out how far outside the colliding object the game object still is
+	topOffset := 0.0
+	bottomOffset := 0.0
+	leftOffset := 0.0
+	rightOffset := 0.0
 
-	if topCollision < bottomCollision && topCollision < leftCollision && topCollision < rightCollision {
-		return EdgeTop
-	} else if bottomCollision < topCollision && bottomCollision < leftCollision && bottomCollision < rightCollision {
-		return EdgeBottom
-	} else if leftCollision < rightCollision && leftCollision < topCollision && leftCollision < bottomCollision {
-		return EdgeLeft
-	} else if rightCollision < leftCollision && rightCollision < topCollision && rightCollision < bottomCollision {
-		return EdgeRight
-	} else {
-		return EdgeNone
+	if gameObject.Position.X < collidingObject.Position.X {
+		leftOffset = collidingObject.Position.X - gameObject.Position.X
 	}
+
+	if (gameObject.Position.X + float64(gameObject.Width())) > (collidingObject.Position.X + float64(collidingObject.Width())) {
+		rightOffset = (gameObject.Position.X + float64(gameObject.Width())) - (collidingObject.Position.X + float64(collidingObject.Width()))
+	}
+
+	if gameObject.Position.Y < collidingObject.Position.Y {
+		bottomOffset = collidingObject.Position.Y - gameObject.Position.Y
+	}
+
+	if (gameObject.Position.Y + float64(gameObject.Height())) > (collidingObject.Position.Y + float64(collidingObject.Height())) {
+		topOffset = (gameObject.Position.Y + float64(gameObject.Height())) - (collidingObject.Position.Y + float64(collidingObject.Height()))
+	}
+
+	// Figure out which offset is the largest, to determine the best edge on
+	// which to report the collision
+	highestOffsetEdge := EdgeNone
+	highestOffsetScore := 0.0
+
+	if leftOffset > highestOffsetScore {
+		highestOffsetEdge = EdgeLeft
+	}
+
+	if rightOffset > highestOffsetScore {
+		highestOffsetEdge = EdgeRight
+	}
+
+	if topOffset > highestOffsetScore {
+		highestOffsetEdge = EdgeTop
+	}
+
+	if bottomOffset > highestOffsetScore {
+		highestOffsetEdge = EdgeBottom
+	}
+
+	return highestOffsetEdge
 
 }

@@ -79,8 +79,8 @@ func (level *Level) AssignFloors() {
 	// Find the objects that sit beneath every other object
 	for _, gameObject := range level.GameObjects {
 
-		// Skip objects that float
-		if gameObject.Mass == 0 {
+		// Skip objects that float or are non-interactive
+		if gameObject.Mass == 0 || gameObject.IsInteractive == false {
 			continue
 		}
 
@@ -184,7 +184,7 @@ func (level *Level) AssignCollisions() {
 
 				gameObject.CollisionHandler(gameObject, Collision{
 					GameObject: collidingObject,
-					Edge:       getCollisionEdge(gameObject, collidingObject),
+					Edge:       gameObject.GetCollisionEdge(collidingObject),
 				})
 
 			}
