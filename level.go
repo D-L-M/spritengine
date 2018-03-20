@@ -29,6 +29,11 @@ func (level *Level) Repaint(stage *image.RGBA) {
 	// Update each game object
 	for _, gameObject := range level.GameObjects {
 
+		// Skip hidden objects
+		if gameObject.IsHidden == true {
+			continue
+		}
+
 		gameObject.Level = level
 		gameObject.RecalculatePosition(level.Gravity)
 
@@ -57,8 +62,8 @@ func (level *Level) AssignFloors() {
 	// Make a map of each object's possible X positions
 	for _, gameObject := range level.GameObjects {
 
-		// Skip non-interactive and non-floor objects
-		if gameObject.IsInteractive == false || gameObject.IsFloor == false {
+		// Skip hidden, non-interactive and non-floor objects
+		if gameObject.IsHidden == true || gameObject.IsInteractive == false || gameObject.IsFloor == false {
 			continue
 		}
 
@@ -122,8 +127,8 @@ func (level *Level) AssignCollisions() {
 	// Make a map of each object's possible X positions
 	for _, gameObject := range level.GameObjects {
 
-		// Skip non-interactive objects
-		if gameObject.IsInteractive == false {
+		// Skip hidden and non-interactive objects
+		if gameObject.IsHidden == true || gameObject.IsInteractive == false {
 			continue
 		}
 

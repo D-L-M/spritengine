@@ -10,11 +10,12 @@ type GameObject struct {
 	Direction        int
 	IsFlipped        bool
 	IsControllable   bool
+	IsFloor          bool
+	IsInteractive    bool
+	IsHidden         bool
 	Level            *Level
 	DynamicData      DynamicData
 	FloorY           float64
-	IsFloor          bool
-	IsInteractive    bool
 	EventHandler     EventHandler
 	CollisionHandler CollisionHandler
 }

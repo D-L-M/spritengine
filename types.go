@@ -52,7 +52,7 @@ type GameObjectStates map[string]SpriteSeries
 // data
 type DynamicData map[string]interface{}
 
-// Collision is a struct that represents a collision between two game objects
+// Collision is a struct that represents a collision with another game object
 type Collision struct {
 	GameObject *GameObject
 	Edge       string
