@@ -12,6 +12,8 @@ type Level struct {
 	Gravity          float64
 	GameObjects      []*GameObject
 	Game             *Game
+	PaintOffset      Vector
+	BeforePaint      BeforePaint
 }
 
 // Repaint redraws the entire level for a new frame
@@ -45,8 +47,10 @@ func (level *Level) Repaint(stage *image.RGBA) {
 
 		// 0 is at the bottom, so flip the Y axis to paint correctly
 		invertedY := level.Game.Height - int(gameObject.Position.Y) - gameObject.Height()
+		paintY := invertedY + int(level.PaintOffset.Y)
+		paintX := int(gameObject.Position.X) - int(level.PaintOffset.X)
 
-		gameObject.CurrentSprite().AddToCanvas(stage, int(gameObject.Position.X), invertedY, gameObject.IsFlipped)
+		gameObject.CurrentSprite().AddToCanvas(stage, paintX, paintY, gameObject.IsFlipped)
 
 	}
 

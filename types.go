@@ -20,6 +20,10 @@ type EventHandler func(eventCode int, gameObject *GameObject)
 // CollisionHandler is the signature for functions that handle collision events
 type CollisionHandler func(gameObject *GameObject, collision Collision)
 
+// BeforePaint is the signature for functions that are called on levels prior
+// to them being repainted
+type BeforePaint func(level *Level)
+
 // Vector is a struct to represent X/Y vectors
 type Vector struct {
 	X float64
