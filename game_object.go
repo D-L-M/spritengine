@@ -184,32 +184,32 @@ func (gameObject *GameObject) ClearDynamicData(key string) {
 // with the game object
 func (gameObject *GameObject) GetCollisionEdge(collidingObject *GameObject) string {
 
-	// Work out how far outside the colliding object the game object still is
-	topOffset := 0.0
-	bottomOffset := 0.0
-	leftOffset := 0.0
-	rightOffset := 0.0
+	// Work out how far inside the colliding object the game object is
+	topOffset := -1.0
+	bottomOffset := -1.0
+	leftOffset := -1.0
+	rightOffset := -1.0
 
 	if gameObject.Position.X < collidingObject.Position.X {
-		leftOffset = collidingObject.Position.X - gameObject.Position.X
+		leftOffset = (gameObject.Position.X + float64(gameObject.Width())) - collidingObject.Position.X
 	}
 
 	if (gameObject.Position.X + float64(gameObject.Width())) > (collidingObject.Position.X + float64(collidingObject.Width())) {
-		rightOffset = (gameObject.Position.X + float64(gameObject.Width())) - (collidingObject.Position.X + float64(collidingObject.Width()))
+		rightOffset = (collidingObject.Position.X + float64(collidingObject.Width())) - gameObject.Position.X
 	}
 
 	if gameObject.Position.Y < collidingObject.Position.Y {
-		bottomOffset = collidingObject.Position.Y - gameObject.Position.Y
+		bottomOffset = (gameObject.Position.Y + float64(gameObject.Height())) - collidingObject.Position.Y
 	}
 
 	if (gameObject.Position.Y + float64(gameObject.Height())) > (collidingObject.Position.Y + float64(collidingObject.Height())) {
-		topOffset = (gameObject.Position.Y + float64(gameObject.Height())) - (collidingObject.Position.Y + float64(collidingObject.Height()))
+		topOffset = (collidingObject.Position.Y + float64(collidingObject.Height())) - gameObject.Position.Y
 	}
 
 	// Figure out which offset is the largest, to determine the best edge on
 	// which to report the collision
 	highestOffsetEdge := EdgeNone
-	highestOffsetScore := 0.0
+	highestOffsetScore := -1.0
 
 	if leftOffset > highestOffsetScore {
 		highestOffsetEdge = EdgeLeft
