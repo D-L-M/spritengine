@@ -3,7 +3,7 @@ package spritengine
 import (
 	"image"
 	"image/color"
-	_ "image/png"
+	_ "image/png" // Import for the side-effect of registering PNG library
 	"io/ioutil"
 	"log"
 	"math"

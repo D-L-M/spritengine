@@ -31,6 +31,12 @@ func CreateSprite(palette *Palette, scanlines []int) (*Sprite, error) {
 // AddToCanvas draws the sprite on an existing image canvas
 func (sprite *Sprite) AddToCanvas(canvas *image.RGBA, targetX int, targetY int, mirrorImage bool) {
 
+	// Return early if the sprite coordinates are off-canvas
+	if targetX+sprite.Width() < 0 || targetX > canvas.Bounds().Max.X ||
+		targetY+sprite.Height() < 0 || targetY > canvas.Bounds().Max.Y {
+		return
+	}
+
 	spriteImage := image.NewRGBA(image.Rect(0, 0, 16, 16))
 
 	for i, scanline := range *sprite.Scanlines {
