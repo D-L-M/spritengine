@@ -47,8 +47,6 @@ func (gameObject *GameObject) CurrentSprite() SpriteInterface {
 // game's frame ticker
 func (gameObject *GameObject) getCurrentSpriteFrame(spriteSeries SpriteSeries) SpriteInterface {
 
-	spriteIndex := 0
-
 	if gameObject.Level != nil {
 
 		game := gameObject.Level.Game
@@ -70,14 +68,14 @@ func (gameObject *GameObject) getCurrentSpriteFrame(spriteSeries SpriteSeries) S
 			}
 
 			if j == game.CurrentFrame {
-				spriteIndex = spriteCounter
+				return spriteSeries.Sprites[spriteCounter]
 			}
 
 		}
 
 	}
 
-	return spriteSeries.Sprites[spriteIndex]
+	return spriteSeries.Sprites[0]
 
 }
 
