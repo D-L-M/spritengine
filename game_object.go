@@ -190,19 +190,19 @@ func (gameObject *GameObject) GetCollisionEdge(collidingObject *GameObject) stri
 	leftOffset := -1.0
 	rightOffset := -1.0
 
-	if gameObject.Position.X < collidingObject.Position.X {
+	if gameObject.Position.X < (collidingObject.Position.X - (float64(collidingObject.Width()) / 2)) {
 		leftOffset = (gameObject.Position.X + float64(gameObject.Width())) - collidingObject.Position.X
 	}
 
-	if (gameObject.Position.X + float64(gameObject.Width())) > (collidingObject.Position.X + float64(collidingObject.Width())) {
+	if (gameObject.Position.X + float64(gameObject.Width())) > (collidingObject.Position.X + (float64(collidingObject.Width()) * 1.5)) {
 		rightOffset = (collidingObject.Position.X + float64(collidingObject.Width())) - gameObject.Position.X
 	}
 
-	if gameObject.Position.Y < collidingObject.Position.Y {
+	if gameObject.Position.Y < (collidingObject.Position.Y - (float64(collidingObject.Height()) / 2)) {
 		bottomOffset = (gameObject.Position.Y + float64(gameObject.Height())) - collidingObject.Position.Y
 	}
 
-	if (gameObject.Position.Y + float64(gameObject.Height())) > (collidingObject.Position.Y + float64(collidingObject.Height())) {
+	if (gameObject.Position.Y + float64(gameObject.Height())) > (collidingObject.Position.Y + (float64(collidingObject.Height()) * 1.5)) {
 		topOffset = (collidingObject.Position.Y + float64(collidingObject.Height())) - gameObject.Position.Y
 	}
 

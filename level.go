@@ -21,7 +21,7 @@ func (level *Level) Repaint(stage *image.RGBA) {
 	level.AssignFloors()
 
 	// Figure out which objects are colliding
-	level.AssignCollisions()
+	level.CalculateCollisions()
 
 	// Paint the background colour
 	draw.Draw(stage, stage.Bounds(), &image.Uniform{level.BackgroundColour}, image.ZP, draw.Src)
@@ -118,9 +118,9 @@ func (level *Level) AssignFloors() {
 
 }
 
-// AssignCollisions iterates through all objects in the level and defines which
+// CalculateCollisions iterates through all objects in the level and defines which
 // objects (if any) intersect them
-func (level *Level) AssignCollisions() {
+func (level *Level) CalculateCollisions() {
 
 	xCoords := map[int][]*GameObject{}
 
