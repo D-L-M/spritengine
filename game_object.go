@@ -133,7 +133,9 @@ func (gameObject *GameObject) RecalculatePosition(gravity float64) {
 
 			gameObject.Position.Y = minYPos
 
-			gameObject.EventHandler(EventDropOffLevel, gameObject)
+			if gameObject.IsInteractive == true {
+				gameObject.EventHandler(EventDropOffLevel, gameObject)
+			}
 
 		}
 
