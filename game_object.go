@@ -127,7 +127,7 @@ func (gameObject *GameObject) RecalculatePosition(gravity float64) {
 	// Don't fall too far off-screen
 	if gameObject.Mass != 0 {
 
-		minYPos := -1000.00
+		minYPos := float64(0 - gameObject.Height())
 
 		if gameObject.Position.Y <= minYPos {
 
