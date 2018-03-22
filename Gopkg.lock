@@ -29,20 +29,16 @@
     "shiny/driver/x11driver",
     "shiny/screen"
   ]
-  revision = "83bc9a11ae1a00a79c4e59fc5d965d21fe14e6bb"
+  revision = "8460e604b9de9da5834c9f198cadf9dca4b05cac"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/image"
   packages = [
     "draw",
-    "font",
-    "font/basicfont",
-    "font/plan9font",
-    "math/f64",
-    "math/fixed"
+    "math/f64"
   ]
-  revision = "12117c17ca67ffa1ce22e9409f3b0b0a93ac08c7"
+  revision = "f3a9b89b59def9194717c1d0bd4c0d08fa1afa7b"
 
 [[projects]]
   branch = "master"
@@ -56,17 +52,17 @@
     "geom",
     "gl"
   ]
-  revision = "70bad68322f4b891e6b4081ab040469b793a9d4a"
+  revision = "57eb1e2f00f3328d52fd84be33963ce585e16abb"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["windows"]
-  revision = "8c0ece68c28377f4c326d85b94f8df0dace46f80"
+  revision = "c488ab1dd8481ef762f96a79a9577c27825be697"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "cdb2bff97004b3cea120a88bdb9ea865032d015f8cc11608cc66977e39b6738f"
+  inputs-digest = "85e81bee4aca2b779d04fa57f696ff43f401e902aeabe37f3444c4c5522aa2e5"
   solver-name = "gps-cdcl"
   solver-version = 1
