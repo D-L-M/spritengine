@@ -113,7 +113,7 @@ func (gameObject *GameObject) RecalculatePosition(gravity float64) {
 		gameObject.Velocity.Y -= (gravity * gameObject.Mass)
 
 		// Ensure the floor object acts as a barrier
-		if gameObject.Position.Y < gameObject.FloorY {
+		if gameObject.Position.Y < gameObject.FloorY && gameObject.Mass != 0 {
 
 			gameObject.Position.Y = gameObject.FloorY
 			gameObject.Velocity.Y = 0
