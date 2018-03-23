@@ -16,9 +16,13 @@ const (
 
 // Collision edges
 const (
-	EdgeTop    = "top"
-	EdgeBottom = "bottom"
-	EdgeLeft   = "left"
-	EdgeRight  = "right"
-	EdgeNone   = "none"
+	EdgeTop         = "top"
+	EdgeTopLeft     = "top_left"
+	EdgeTopRight    = "top_right"
+	EdgeBottom      = "bottom"
+	EdgeBottomLeft  = "bottom_left"
+	EdgeBottomRight = "bottom_right"
+	EdgeLeft        = "left"
+	EdgeRight       = "right"
+	EdgeNone        = "none"
 )

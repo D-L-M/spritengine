@@ -184,49 +184,43 @@ func (gameObject *GameObject) ClearDynamicData(key string) {
 // with the game object
 func (gameObject *GameObject) GetCollisionEdge(collidingObject *GameObject) string {
 
-	// Work out how far inside the colliding object the game object is
-	topOffset := -1.0
-	bottomOffset := -1.0
-	leftOffset := -1.0
-	rightOffset := -1.0
+	isLeft := gameObject.Position.X < collidingObject.Position.X
+	isRight := (gameObject.Position.X + float64(gameObject.Width())) > (collidingObject.Position.X + float64(collidingObject.Width()))
+	isBottom := gameObject.Position.Y < collidingObject.Position.Y
+	isTop := (gameObject.Position.Y + float64(gameObject.Height())) > (collidingObject.Position.Y + float64(collidingObject.Height()))
 
-	if gameObject.Position.X < (collidingObject.Position.X - (float64(collidingObject.Width()) / 2)) {
-		leftOffset = (gameObject.Position.X + float64(gameObject.Width())) - collidingObject.Position.X
+	if isLeft == true && isTop == true {
+		return EdgeTopLeft
 	}
 
-	if (gameObject.Position.X + float64(gameObject.Width())) > (collidingObject.Position.X + (float64(collidingObject.Width()) * 1.5)) {
-		rightOffset = (collidingObject.Position.X + float64(collidingObject.Width())) - gameObject.Position.X
+	if isRight == true && isTop == true {
+		return EdgeTopRight
 	}
 
-	if gameObject.Position.Y < (collidingObject.Position.Y - (float64(collidingObject.Height()) / 2)) {
-		bottomOffset = (gameObject.Position.Y + float64(gameObject.Height())) - collidingObject.Position.Y
+	if isLeft == true && isBottom == true {
+		return EdgeBottomLeft
 	}
 
-	if (gameObject.Position.Y + float64(gameObject.Height())) > (collidingObject.Position.Y + (float64(collidingObject.Height()) * 1.5)) {
-		topOffset = (collidingObject.Position.Y + float64(collidingObject.Height())) - gameObject.Position.Y
+	if isRight == true && isBottom == true {
+		return EdgeBottomRight
 	}
 
-	// Figure out which offset is the largest, to determine the best edge on
-	// which to report the collision
-	highestOffsetEdge := EdgeNone
-	highestOffsetScore := -1.0
-
-	if leftOffset > highestOffsetScore {
-		highestOffsetEdge = EdgeLeft
+	if isLeft {
+		return EdgeLeft
 	}
 
-	if rightOffset > highestOffsetScore {
-		highestOffsetEdge = EdgeRight
+	if isRight {
+		return EdgeRight
 	}
 
-	if topOffset > highestOffsetScore {
-		highestOffsetEdge = EdgeTop
+	if isBottom {
+		return EdgeBottom
 	}
 
-	if bottomOffset > highestOffsetScore {
-		highestOffsetEdge = EdgeBottom
+	if isTop {
+		return EdgeTop
 	}
 
-	return highestOffsetEdge
+	return EdgeNone
 
 }
