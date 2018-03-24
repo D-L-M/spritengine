@@ -109,16 +109,20 @@ func (gameObject *GameObject) RecalculatePosition(gravity float64) {
 
 		gameObject.EventHandler(EventFreefall, gameObject)
 
+		wasAboveFloor := gameObject.Position.Y > gameObject.FloorY
+
 		gameObject.Position.Y += gameObject.Velocity.Y
 		gameObject.Velocity.Y -= (gravity * gameObject.Mass)
 
 		// Ensure the floor object acts as a barrier
-		if gameObject.Position.Y < gameObject.FloorY && gameObject.Mass != 0 {
+		if gameObject.Position.Y <= gameObject.FloorY && gameObject.Mass != 0 {
 
 			gameObject.Position.Y = gameObject.FloorY
 			gameObject.Velocity.Y = 0
 
-			gameObject.EventHandler(EventFloorCollision, gameObject)
+			if wasAboveFloor == true {
+				gameObject.EventHandler(EventFloorCollision, gameObject)
+			}
 
 		}
 
@@ -193,7 +197,7 @@ func (gameObject *GameObject) GetCollisionEdge(collidingObject *GameObject) stri
 
 	// If both objects are at rest a simple 'left' or 'right' can be assumed,
 	// regardless of the height of either object
-	if gameObject.Velocity.Y <= 0 && collidingObject.Velocity.Y <= 0 {
+	if gameObject.Velocity.Y == 0 && collidingObject.Velocity.Y == 0 {
 
 		if isLeft == true {
 			return EdgeLeft
