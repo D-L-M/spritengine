@@ -184,11 +184,28 @@ func (gameObject *GameObject) ClearDynamicData(key string) {
 // with the game object
 func (gameObject *GameObject) GetCollisionEdge(collidingObject *GameObject) string {
 
+	// Where is the game object's outer edge in relation to the colliding
+	// object?
 	isLeft := gameObject.Position.X < collidingObject.Position.X
 	isRight := (gameObject.Position.X + float64(gameObject.Width())) > (collidingObject.Position.X + float64(collidingObject.Width()))
 	isBottom := gameObject.Position.Y < collidingObject.Position.Y
 	isTop := (gameObject.Position.Y + float64(gameObject.Height())) > (collidingObject.Position.Y + float64(collidingObject.Height()))
 
+	// If both objects are at rest a simple 'left' or 'right' can be assumed,
+	// regardless of the height of either object
+	if gameObject.Velocity.Y == 0 && collidingObject.Velocity.Y == 0 {
+
+		if isLeft == true {
+			return EdgeLeft
+		}
+
+		if isRight == true {
+			return EdgeRight
+		}
+
+	}
+
+	// If there's any vertical movement, combination edges will make more sense
 	if isLeft == true && isTop == true {
 		return EdgeTopLeft
 	}
@@ -205,6 +222,9 @@ func (gameObject *GameObject) GetCollisionEdge(collidingObject *GameObject) stri
 		return EdgeBottomRight
 	}
 
+	// Failing the above, it may be the case that the game object is smaller
+	// than the colliding object, and therefore fits nicely within one of the
+	// regular edges
 	if isLeft {
 		return EdgeLeft
 	}
@@ -221,6 +241,8 @@ func (gameObject *GameObject) GetCollisionEdge(collidingObject *GameObject) stri
 		return EdgeTop
 	}
 
+	// Should never reach here unless the game object is wholly within the
+	// colliding object
 	return EdgeNone
 
 }
