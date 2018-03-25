@@ -197,7 +197,8 @@ func (gameObject *GameObject) GetCollisionEdge(collidingObject *GameObject) stri
 
 	// If both objects are at rest a simple 'left' or 'right' can be assumed,
 	// regardless of the height of either object
-	if gameObject.Velocity.Y == 0 && collidingObject.Velocity.Y == 0 {
+	if (gameObject.Mass == 0 || gameObject.IsResting() == true) &&
+		(collidingObject.Mass == 0 || collidingObject.IsResting() == true) {
 
 		if isLeft == true {
 			return EdgeLeft
