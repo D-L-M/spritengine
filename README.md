@@ -4,6 +4,8 @@
 
 spritengine is a simple game engine written in Golang that provides the tools to easily build an 80s style 2D side-scrolling platformer.
 
+A basic example game can be found in the `example/` directory.
+
 ## Sprites
 
 Sprites are 16x16 pixels in size, represented by a group of 32 32-bit integers. They can contain up to 16 different RGBA colours as defined by a colour palette.
