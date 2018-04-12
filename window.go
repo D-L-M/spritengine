@@ -18,7 +18,16 @@ func createWindow(game *Game) {
 
 	lastPaintTimeNano := time.Now().UnixNano()
 	targetFrameAgeNano := int64(1000000000) / int64(game.TargetFrameRate)
+	previousFrameRates := []float64{}
+	maxFrameRatesToConsider := 100
+	frameRateDrift := 0.0
 
+	// Prefill the previous framerate slice
+	for i := 0; i < maxFrameRatesToConsider; i++ {
+		previousFrameRates = append(previousFrameRates, float64(game.TargetFrameRate))
+	}
+
+	// Create a new window and listen for events
 	driver.Main(func(src screen.Screen) {
 
 		res := image.Pt(game.Width*game.ScaleFactor, game.Height*game.ScaleFactor)
@@ -41,14 +50,14 @@ func createWindow(game *Game) {
 
 				timeNowNano := time.Now().UnixNano()
 				frameAgeNano := (timeNowNano - lastPaintTimeNano)
+				frameRateDriftNano := int64(frameRateDrift * 1000000000)
 
 				// Throttle to the desired FPS
 				if frameAgeNano < targetFrameAgeNano {
-					time.Sleep(time.Duration(targetFrameAgeNano-frameAgeNano) * time.Nanosecond)
+					time.Sleep(time.Duration(targetFrameAgeNano-frameAgeNano-frameRateDriftNano) * time.Nanosecond)
 					frameAgeNano = targetFrameAgeNano
 				}
 
-				// TODO: Move this code into the Game object?
 				game.CurrentFrame++
 
 				if game.CurrentFrame > game.TargetFrameRate {
@@ -59,11 +68,30 @@ func createWindow(game *Game) {
 				frameAgeSeconds := (float64(frameAgeNano) / float64(1000000000))
 				currentFrameRate := 1 / frameAgeSeconds
 
+				// Work out the average frame rate
+				previousFrameRates = append(previousFrameRates, currentFrameRate)
+
+				if len(previousFrameRates) > int(maxFrameRatesToConsider) {
+					previousFrameRates = previousFrameRates[1:]
+				}
+
+				talliedFrameRate := 0.0
+
+				for _, individualFrameRate := range previousFrameRates {
+					talliedFrameRate += individualFrameRate
+				}
+
+				averageFrameRate := talliedFrameRate / float64(maxFrameRatesToConsider)
+
+				// Figure out by how much we're straying from the target framerate
+				frameRateDrift = float64(game.TargetFrameRate) - averageFrameRate
+
+				// Repaint the stage
 				stage := image.NewRGBA(image.Rect(0, 0, game.Width, game.Height))
 
 				game.CurrentLevel().BeforePaint(game.CurrentLevel())
 				game.CurrentLevel().Repaint(stage)
-				game.FramePainter(stage, game.CurrentLevel(), currentFrameRate)
+				game.FramePainter(stage, game.CurrentLevel(), averageFrameRate)
 				xdraw.NearestNeighbor.Scale(buf.RGBA(), image.Rect(0, 0, game.Width*game.ScaleFactor, game.Height*game.ScaleFactor), stage, stage.Bounds(), draw.Over, nil)
 				win.Upload(image.Point{}, buf, buf.Bounds())
 				win.Publish()

@@ -23,26 +23,10 @@ func main() {
 
 }
 
-var frameRates = []float64{}
-
 // framePainter adds additional graphics to the painted level frame
 func framePainter(stage *image.RGBA, level *spritengine.Level, frameRate float64) {
 
-	// Work out the average frame rate
-	frameRateLimit := 30.0
-	frameRates = append(frameRates, frameRate)
-
-	if len(frameRates) > int(frameRateLimit) {
-		frameRates = frameRates[1:]
-	}
-
-	averageFrameRate := 0.0
-
-	for _, individualFrameRate := range frameRates {
-		averageFrameRate += individualFrameRate
-	}
-
-	writeText(stage, "FPS: "+fmt.Sprintf("%.2f", (averageFrameRate/frameRateLimit)), 10, 20)
+	writeText(stage, "FPS: "+fmt.Sprintf("%.2f", frameRate), 10, 20)
 
 }
 
