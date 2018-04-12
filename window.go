@@ -48,8 +48,7 @@ func createWindow(game *Game) {
 				// Window repaints
 			case paint.Event:
 
-				timeNowNano := time.Now().UnixNano()
-				frameAgeNano := (timeNowNano - lastPaintTimeNano)
+				frameAgeNano := (time.Now().UnixNano() - lastPaintTimeNano)
 				frameRateDriftNano := int64(frameRateDrift * 1000000000)
 
 				// Throttle to the desired FPS
@@ -64,7 +63,6 @@ func createWindow(game *Game) {
 					game.CurrentFrame = 1
 				}
 
-				lastPaintTimeNano = timeNowNano
 				frameAgeSeconds := (float64(frameAgeNano) / float64(1000000000))
 				currentFrameRate := 1 / frameAgeSeconds
 
@@ -87,6 +85,7 @@ func createWindow(game *Game) {
 				frameRateDrift = float64(game.TargetFrameRate) - averageFrameRate
 
 				// Repaint the stage
+				lastPaintTimeNano = time.Now().UnixNano()
 				stage := image.NewRGBA(image.Rect(0, 0, game.Width, game.Height))
 
 				game.CurrentLevel().BeforePaint(game.CurrentLevel())
