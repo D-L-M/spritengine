@@ -107,12 +107,15 @@ func (gameObject *GameObject) RecalculatePosition(gravity float64) {
 	// Jump up (and/or be pulled down by gravity) if the floor is further down
 	if gameObject.FloorY <= gameObject.Position.Y {
 
-		gameObject.EventHandler(EventFreefall, gameObject)
-
 		wasAboveFloor := gameObject.Position.Y > gameObject.FloorY
 
 		gameObject.Position.Y += gameObject.Velocity.Y
 		gameObject.Velocity.Y -= (gravity * gameObject.Mass)
+
+		// If actively falling down, emit the 'freefall' event
+		if gameObject.Position.Y > gameObject.FloorY && gameObject.Velocity.Y < 0 {
+			gameObject.EventHandler(EventFreefall, gameObject)
+		}
 
 		// Ensure the floor object acts as a barrier
 		if gameObject.Position.Y <= gameObject.FloorY && gameObject.Mass != 0 {
