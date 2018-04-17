@@ -19,14 +19,18 @@ func main() {
 		getLevel(),
 	}
 
-	spritengine.CreateGame("Game Example", 320, 224, 2, 48, framePainter, keyListener, levels)
+	spritengine.CreateGame("Game Example", 320, 224, 2, 64, framePainter, keyListener, levels)
 
 }
 
 // framePainter adds additional graphics to the painted level frame
 func framePainter(stage *image.RGBA, level *spritengine.Level, frameRate float64) {
 
+	// Framerate
 	writeText(stage, "FPS: "+fmt.Sprintf("%.2f", frameRate), 10, 20)
+
+	// Progress
+	writeText(stage, "Progress: "+fmt.Sprintf("%.0f", ((level.PaintOffset.X/getMaxScrollX())*100))+"%", 10, 35)
 
 }
 
@@ -85,15 +89,27 @@ func getLevel() *spritengine.Level {
 
 	gameObjects := []*spritengine.GameObject{}
 
-	for i := 0; i < 24; i++ {
-		gameObjects = append(gameObjects, getFloor(float64(i*16), 0))
+	for i := 0; i < 80; i++ {
+
+		if i > 24 && i < 29 {
+			continue
+		}
+
+		yPos := 0.0
+
+		if i > 48 && i < 53 {
+			yPos = 40.0
+		}
+
+		gameObjects = append(gameObjects, getFloor(float64(i*16), yPos))
+
 	}
 
 	gameObjects = append(gameObjects, getCharacter())
 
 	return &spritengine.Level{
-		Gravity:          0.5,
-		BackgroundColour: color.RGBA{200, 200, 200, 255},
+		Gravity:          1,
+		BackgroundColour: color.RGBA{126, 192, 238, 255},
 		BeforePaint:      beforePaint,
 		GameObjects:      gameObjects,
 		PaintOffset: spritengine.Vector{
@@ -107,7 +123,7 @@ func getLevel() *spritengine.Level {
 // getMaxScrollX gets the maximum level scroll width
 func getMaxScrollX() float64 {
 
-	return 1600.0
+	return 960.0
 
 }
 
@@ -256,7 +272,7 @@ func getCharacter() *spritengine.GameObject {
 			X: 0,
 			Y: 16,
 		},
-		Mass: 1,
+		Mass: 0.4,
 		Velocity: spritengine.Vector{
 			X: 2,
 			Y: 0,
