@@ -89,6 +89,7 @@ func getLevel() *spritengine.Level {
 
 	gameObjects := []*spritengine.GameObject{}
 
+	// Floor
 	for i := 0; i < 80; i++ {
 
 		if i > 24 && i < 29 {
@@ -97,7 +98,7 @@ func getLevel() *spritengine.Level {
 
 		yPos := 0.0
 
-		if i > 48 && i < 53 {
+		if i > 48 && i < 55 {
 			yPos = 40.0
 		}
 
@@ -105,7 +106,15 @@ func getLevel() *spritengine.Level {
 
 	}
 
-	gameObjects = append(gameObjects, getCharacter())
+	for i := 58; i < 62; i++ {
+		gameObjects = append(gameObjects, getFloor(float64(i*16), 85.0))
+	}
+
+	// Powerups
+	gameObjects = append(gameObjects, getPowerup(950, 170))
+
+	// Character
+	gameObjects = append(gameObjects, getCharacter(20, 16))
 
 	return &spritengine.Level{
 		Gravity:          1,
@@ -246,7 +255,7 @@ var spriteCharacterLanding12, _ = spritengine.CreateSprite(paletteCharacter, []i
 var characterLanding, _ = spritengine.CreateSpriteGroup(2, 3, &[]*spritengine.Sprite{spriteCharacterLanding00, spriteCharacterLanding10, spriteCharacterLanding01, spriteCharacterLanding11, spriteCharacterLanding02, spriteCharacterLanding12})
 
 // getCharacter gets the controllable character object
-func getCharacter() *spritengine.GameObject {
+func getCharacter(xPos float64, yPos float64) *spritengine.GameObject {
 
 	return &spritengine.GameObject{
 		CurrentState: "standing",
@@ -269,8 +278,8 @@ func getCharacter() *spritengine.GameObject {
 			},
 		},
 		Position: spritengine.Vector{
-			X: 0,
-			Y: 16,
+			X: xPos,
+			Y: yPos,
 		},
 		Mass: 0.4,
 		Velocity: spritengine.Vector{
@@ -286,7 +295,19 @@ func getCharacter() *spritengine.GameObject {
 		DynamicData:      spritengine.DynamicData{},
 		FloorY:           0,
 		EventHandler:     characterEventHandler,
-		CollisionHandler: func(gameObject *spritengine.GameObject, collision spritengine.Collision) {},
+		CollisionHandler: characterCollisionHandler,
+	}
+
+}
+
+// characterCollisionHandler handles collision events for the character
+func characterCollisionHandler(gameObject *spritengine.GameObject, collision spritengine.Collision) {
+
+	if collision.GameObject.GetDynamicData("type", "") == "powerup" {
+		gameObject.Velocity.X = 3
+		gameObject.Level.Gravity = 0.3
+		collision.GameObject.IsHidden = true
+		collision.GameObject.IsInteractive = false
 	}
 
 }
@@ -308,7 +329,7 @@ func characterEventHandler(eventCode int, gameObject *spritengine.GameObject) {
 		}
 
 	case spritengine.EventDropOffLevel:
-		gameObject.Position.X = 0
+		gameObject.Position.X = 20
 		gameObject.Position.Y = 100
 		gameObject.IsFlipped = false
 
@@ -348,6 +369,45 @@ func getFloor(xPos float64, yPos float64) *spritengine.GameObject {
 		IsInteractive:    true,
 		IsHidden:         false,
 		DynamicData:      spritengine.DynamicData{},
+		FloorY:           0,
+		EventHandler:     func(eventCode int, gameObject *spritengine.GameObject) {},
+		CollisionHandler: func(gameObject *spritengine.GameObject, collision spritengine.Collision) {},
+	}
+
+}
+
+// Sprite information for powerups
+var palettePowerup = &spritengine.Palette{"b": color.RGBA{255, 208, 106, 255}, "c": color.RGBA{245, 209, 127, 255}, "0": color.RGBA{255, 255, 255, 255}, "7": color.RGBA{255, 203, 91, 255}, "9": color.RGBA{34, 30, 32, 255}, "3": color.RGBA{233, 182, 76, 255}, "a": color.RGBA{234, 194, 106, 255}, "e": color.RGBA{171, 132, 51, 255}, "1": color.RGBA{255, 251, 243, 255}, "2": color.RGBA{237, 180, 59, 255}, "d": color.RGBA{0, 0, 0, 0}, "8": color.RGBA{255, 226, 162, 255}, "4": color.RGBA{255, 238, 203, 255}, "5": color.RGBA{255, 248, 234, 255}, "6": color.RGBA{47, 40, 34, 255}}
+var spritePowerup, _ = spritengine.CreateSprite(palettePowerup, []int{0xd9666666, 0x6666669d, 0x9e223acc, 0xcaa322e9, 0x62777778, 0x87777726, 0x627777b5, 0x1b777726, 0x63777780, 0x08777726, 0x637b8800, 0x014cb776, 0x6a400000, 0x000005a6, 0x6ab50000, 0x00001bc6, 0x6a7b5000, 0x0001b7a6, 0x6a778000, 0x000877c6, 0x6a778000, 0x00087736, 0x63774001, 0x10047736, 0x6277858b, 0x78447726, 0x6277c777, 0x777c7726, 0x9e223aac, 0xcae322e9, 0xd9666666, 0x6666669d})
+var powerup, _ = spritengine.CreateSpriteGroup(1, 1, &[]*spritengine.Sprite{spritePowerup})
+
+// getPowerup gets a new powerup object
+func getPowerup(xPos float64, yPos float64) *spritengine.GameObject {
+
+	return &spritengine.GameObject{
+		CurrentState: "default",
+		States: spritengine.GameObjectStates{
+			"default": spritengine.SpriteSeries{
+				Sprites:         []spritengine.SpriteInterface{powerup},
+				CyclesPerSecond: 1,
+			},
+		},
+		Position: spritengine.Vector{
+			X: xPos,
+			Y: yPos,
+		},
+		Mass: 0,
+		Velocity: spritengine.Vector{
+			X: 0,
+			Y: 0,
+		},
+		Direction:        spritengine.DirStationary,
+		IsFlipped:        false,
+		IsControllable:   false,
+		IsFloor:          false,
+		IsInteractive:    true,
+		IsHidden:         false,
+		DynamicData:      spritengine.DynamicData{"type": "powerup"},
 		FloorY:           0,
 		EventHandler:     func(eventCode int, gameObject *spritengine.GameObject) {},
 		CollisionHandler: func(gameObject *spritengine.GameObject, collision spritengine.Collision) {},
