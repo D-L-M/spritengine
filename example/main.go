@@ -145,6 +145,7 @@ func beforePaint(level *spritengine.Level) {
 		if gameObject.IsControllable {
 
 			xOffset := gameObject.Position.X - float64(level.Game.Width/2)
+			yOffset := gameObject.Position.Y - float64(level.Game.Height/2)
 
 			if xOffset < 0 {
 				xOffset = 0
@@ -154,7 +155,12 @@ func beforePaint(level *spritengine.Level) {
 				xOffset = getMaxScrollX()
 			}
 
+			if gameObject.Position.Y < float64(level.Game.Height/2) {
+				yOffset = 0
+			}
+
 			level.PaintOffset.X = xOffset
+			level.PaintOffset.Y = yOffset
 
 		}
 
