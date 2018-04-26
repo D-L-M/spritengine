@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"math/rand"
 
 	"github.com/D-L-M/spritengine"
 	"golang.org/x/image/font"
@@ -88,6 +89,13 @@ func keyListener(event key.Event, gameObject *spritengine.GameObject) {
 func getLevel() *spritengine.Level {
 
 	gameObjects := []*spritengine.GameObject{}
+
+	// Clouds
+	for i := 0; i < 8; i++ {
+		cloudX := float64((i * 150) + rand.Intn(100-10) + 10)
+		cloudY := float64(rand.Intn(200-150) + 150)
+		gameObjects = append(gameObjects, getCloud(cloudX, cloudY))
+	}
 
 	// Floor
 	for i := 0; i < 80; i++ {
@@ -373,6 +381,53 @@ func getFloor(xPos float64, yPos float64) *spritengine.GameObject {
 		IsControllable:   false,
 		IsFloor:          true,
 		IsInteractive:    true,
+		IsHidden:         false,
+		DynamicData:      spritengine.DynamicData{},
+		FloorY:           0,
+		EventHandler:     func(eventCode int, gameObject *spritengine.GameObject) {},
+		CollisionHandler: func(gameObject *spritengine.GameObject, collision spritengine.Collision) {},
+	}
+
+}
+
+// Sprite information for clouds
+var paletteCloud = &spritengine.Palette{"0": color.RGBA{0, 0, 0, 0}, "1": color.RGBA{255, 255, 255, 255}}
+var spriteCloud00, _ = spritengine.CreateSprite(paletteCloud, []int{0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000011, 0x00000000, 0x00000011, 0x00000000, 0x00000111, 0x00000000, 0x00001111, 0x00000000, 0x00011111, 0x00000000, 0x00011111, 0x00000000, 0x00011111, 0x00000000, 0x00011111})
+var spriteCloud10, _ = spritengine.CreateSprite(paletteCloud, []int{0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00011111, 0x11111000, 0x01111111, 0x11111110, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111})
+var spriteCloud20, _ = spritengine.CreateSprite(paletteCloud, []int{0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x10000000, 0x00000000, 0x11000000, 0x00000000, 0x11100000, 0x00000000, 0x11110000, 0x00000000, 0x11110000, 0x00000000, 0x11111000, 0x00000000, 0x11111000, 0x00000000, 0x11111000, 0x00000000})
+var spriteCloud01, _ = spritengine.CreateSprite(paletteCloud, []int{0x00000000, 0x00011111, 0x00000001, 0x11111111, 0x00000011, 0x11111111, 0x00001111, 0x11111111, 0x00011111, 0x11111111, 0x00111111, 0x11111111, 0x00111111, 0x11111111, 0x01111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111})
+var spriteCloud11, _ = spritengine.CreateSprite(paletteCloud, []int{0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111})
+var spriteCloud21, _ = spritengine.CreateSprite(paletteCloud, []int{0x11111000, 0x00000000, 0x11111111, 0x00000000, 0x11111111, 0x11000000, 0x11111111, 0x11110000, 0x11111111, 0x11111000, 0x11111111, 0x11111100, 0x11111111, 0x11111110, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111})
+var spriteCloud02, _ = spritengine.CreateSprite(paletteCloud, []int{0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x01111111, 0x11111111, 0x00111111, 0x11111111, 0x00011111, 0x11111111, 0x00001111, 0x11111111, 0x00000111, 0x11111111, 0x00000011, 0x11111111, 0x00000000, 0x01111110, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000})
+var spriteCloud12, _ = spritengine.CreateSprite(paletteCloud, []int{0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x01111111, 0x11111110, 0x00111111, 0x11111000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000})
+var spriteCloud22, _ = spritengine.CreateSprite(paletteCloud, []int{0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111111, 0x11111110, 0x11111111, 0x11111100, 0x11111111, 0x11111000, 0x11111111, 0x11110000, 0x11111111, 0x11100000, 0x11111111, 0x10000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000})
+var cloud, _ = spritengine.CreateSpriteGroup(3, 3, &[]*spritengine.Sprite{spriteCloud00, spriteCloud10, spriteCloud20, spriteCloud01, spriteCloud11, spriteCloud21, spriteCloud02, spriteCloud12, spriteCloud22})
+
+// getCloud gets a new cloud object
+func getCloud(xPos float64, yPos float64) *spritengine.GameObject {
+
+	return &spritengine.GameObject{
+		CurrentState: "default",
+		States: spritengine.GameObjectStates{
+			"default": spritengine.SpriteSeries{
+				Sprites:         []spritengine.SpriteInterface{cloud},
+				CyclesPerSecond: 1,
+			},
+		},
+		Position: spritengine.Vector{
+			X: xPos,
+			Y: yPos,
+		},
+		Mass: 0,
+		Velocity: spritengine.Vector{
+			X: 0,
+			Y: 0,
+		},
+		Direction:        spritengine.DirStationary,
+		IsFlipped:        false,
+		IsControllable:   false,
+		IsFloor:          false,
+		IsInteractive:    false,
 		IsHidden:         false,
 		DynamicData:      spritengine.DynamicData{},
 		FloorY:           0,
